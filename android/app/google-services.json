@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "744836218062",
+    "project_id": "financemanagement-ead7b",
+    "storage_bucket": "financemanagement-ead7b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:744836218062:android:723df5b600dc412d2fa49f",
+        "android_client_info": {
+          "package_name": "com.example.financemanagement"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBjGyHjJNEre4wqjgcZd2Sk3JTiFAO_kc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -2,8 +2,10 @@ import 'package:financemanagement/screens/home_screen.dart';
 import 'package:financemanagement/screens/signin_screen.dart';
 import 'package:financemanagement/screens/signup_screen.dart';
 import 'package:financemanagement/utils/color.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:financemanagement/reusable_widget/reusable_widget.dart';
 
 
@@ -43,9 +45,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 reusableTextField("Enter confirm password", Icons.lock_outline, true, confirmpasswordController),
                 SizedBox(height: 30),
                 signInButton(context, false, (){
-                  Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                  );
+                  FirebaseAuth.instance.createUserWithEmailAndPassword(
+                      email: emailController.text,
+                      password: passwordController.text)
+                      .then((value) {
+                        Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => HomeScreen()));
+                      }).onError((error, stackTrace) {
+                    print("Error: $error");
+                  });
                 }),
                 SizedBox(height: 20),
                 SignUpOption()

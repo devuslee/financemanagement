@@ -1,8 +1,19 @@
 import 'package:financemanagement/screens/signin_screen.dart';
 import 'package:financemanagement/screens/signup_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+      apiKey: "AIzaSyBBjGyHjJNEre4wqjgcZd2Sk3JTiFAO_kc",
+      appId: "1:744836218062:android:723df5b600dc412d2fa49f",
+      messagingSenderId: "744836218062",
+      projectId: "financemanagement-ead7b",
+    ),
+  );
   runApp(const MyApp());
 }
 
