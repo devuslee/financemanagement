@@ -1,6 +1,5 @@
 import 'package:financemanagement/screens/analytic_screen.dart';
 import 'package:financemanagement/screens/home_screen.dart';
-import 'package:financemanagement/screens/profile_screen.dart';
 import 'package:financemanagement/screens/signin_screen.dart';
 import 'package:financemanagement/screens/signup_screen.dart';
 import 'package:financemanagement/utils/color.dart';
@@ -11,16 +10,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:financemanagement/reusable_widget/reusable_widget.dart';
 
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  int currentPageIndex = 0;
-
+class _ProfileScreenState extends State<ProfileScreen> {
+  int currentPageIndex = 2;
   @override
   Widget build(BuildContext context) {
     return Scaffold(

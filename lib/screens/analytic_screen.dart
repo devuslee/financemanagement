@@ -1,4 +1,3 @@
-import 'package:financemanagement/screens/analytic_screen.dart';
 import 'package:financemanagement/screens/home_screen.dart';
 import 'package:financemanagement/screens/profile_screen.dart';
 import 'package:financemanagement/screens/signin_screen.dart';
@@ -11,16 +10,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:financemanagement/reusable_widget/reusable_widget.dart';
 
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+
+class AnalyticsScreen extends StatefulWidget {
+  const AnalyticsScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<AnalyticsScreen> createState() => _AnalyticsScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  int currentPageIndex = 0;
-
+class _AnalyticsScreenState extends State<AnalyticsScreen> {
+  int currentPageIndex = 1;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,25 +64,25 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Center(
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [ElevatedButton(
-              child: Text("Log Out"),
-              onPressed: () {
-                FirebaseAuth.instance.signOut()
-                    .then((value) {
-                  Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SignInScreen()),
-                  );
-                }).onError((error, stackTrace) {
-                  print("Error: $error");
-                });
-              },
-            ),
-              SizedBox(height: 20),
-              Text(
-                  "Profile Screen",
-                  style: TextStyle(fontSize: 20, color: Colors.black))
-            ]),
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [ElevatedButton(
+          child: Text("Log Out"),
+          onPressed: () {
+            FirebaseAuth.instance.signOut()
+                .then((value) {
+              Navigator.push(context,
+                MaterialPageRoute(builder: (context) => SignInScreen()),
+              );
+            }).onError((error, stackTrace) {
+              print("Error: $error");
+            });
+          },
+        ),
+          SizedBox(height: 20),
+          Text(
+              "Analytics Screen",
+              style: TextStyle(fontSize: 20, color: Colors.black))
+        ]),
       ),
     );
   }
