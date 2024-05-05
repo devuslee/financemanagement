@@ -44,18 +44,18 @@ class _SignInScreenState extends State<SignInScreen> {
                 SizedBox(height: 30),
                 reusableTextField("Enter password", Icons.lock_outline, true, passwordController),
                 SizedBox(height: 30),
-                signInButton(context, true, (){
+                signInButton(context, "Sign In", Colors.white, () {
+                  //i want to test my app and auto login everytime
                   FirebaseAuth.instance.signInWithEmailAndPassword(
-                      email:emailController.text,
-                      password: passwordController.text)
-                  .then((value) {
+                      email: "devuslee@yahoo.com",
+                      password: "123123")
+                      .then((value) {
                     Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()),
-                    );
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
                   }).onError((error, stackTrace) {
                     print("Error: $error");
                   });
-                  }
+                }
                 ),
                 SizedBox(height: 20),
                 SignUpOption()

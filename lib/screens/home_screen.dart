@@ -1,3 +1,4 @@
+import 'package:financemanagement/screens/add_transaction_screen.dart';
 import 'package:financemanagement/screens/analytic_screen.dart';
 import 'package:financemanagement/screens/home_screen.dart';
 import 'package:financemanagement/screens/profile_screen.dart';
@@ -7,6 +8,7 @@ import 'package:financemanagement/utils/color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:financemanagement/reusable_widget/reusable_widget.dart';
 
@@ -64,26 +66,104 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [ElevatedButton(
-              child: Text("Log Out"),
-              onPressed: () {
-                FirebaseAuth.instance.signOut()
-                    .then((value) {
-                  Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SignInScreen()),
-                  );
-                }).onError((error, stackTrace) {
-                  print("Error: $error");
-                });
-              },
-            ),
-              SizedBox(height: 20),
-              Text(
-                  "Profile Screen",
-                  style: TextStyle(fontSize: 20, color: Colors.black))
-            ]),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(24),
+                  ),
+                  onPressed: () {
+                    Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AddTransactionScreen()));
+                  },
+                  child: Text("+"),
+                ),
+                SizedBox(height: 20),
+                StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance.collection("Transaction").snapshots(),
+                    builder: (context, snapshot) {
+                    List<Row> transactionWidgets = [];
+
+                    if(snapshot.hasData) {
+                      final transactions = snapshot.data?.docs.reversed.toList();
+                      for(var transaction in transactions!) {
+                        final transactionName = transaction["transactionName"];
+                        final transactionAmount = transaction["transactionAmount"];
+                        final transactionType = transaction["transactionType"];
+
+                        final transactionWidget = Row(
+                          children: [
+                            Text(transactionName),
+                            Text(transactionAmount),
+                            Text(transactionType)
+                          ],
+                        );
+                        transactionWidgets.add(transactionWidget);
+                      }
+                    }
+                    return Expanded(
+                      child: ListView(
+                        children: <Widget>[
+                          for (var transactionWidget in transactionWidgets)
+                            Container(
+                              height: 100,
+                              color: Colors.amber[600],
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        (transactionWidget as Row).children[0].toString(), // Accessing transactionName
+                                        textAlign: TextAlign.left, // Adjust as needed
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        (transactionWidget as Row).children[1].toString(), // Accessing transactionAmount
+                                          textAlign: TextAlign.center, // Adjust as needed
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          (transactionWidget as Row).children[2].toString(), // Accessing transactionType
+                                          textAlign: TextAlign.right, // Adjust as needed
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                  ), // Accessing transactionType
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ]),
+        ),
       ),
     );
   }

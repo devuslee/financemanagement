@@ -44,7 +44,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 SizedBox(height: 30),
                 reusableTextField("Enter confirm password", Icons.lock_outline, true, confirmpasswordController),
                 SizedBox(height: 30),
-                signInButton(context, false, (){
+                signInButton(context, "Sign Up", Colors.white, (){
                   FirebaseAuth.instance.createUserWithEmailAndPassword(
                       email: emailController.text,
                       password: passwordController.text)
