@@ -90,7 +90,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     List<Row> transactionWidgets = [];
 
                     if(snapshot.hasData) {
-                      final transactions = snapshot.data?.docs.reversed.toList();
+                      final transactions = snapshot.data?.docs.toList();
+                      transactions?.sort((a, b) => b["transactionTime"].compareTo(a["transactionTime"]));
                       for(var transaction in transactions!) {
                         final transactionName = transaction["transactionName"];
                         final transactionAmount = transaction["transactionAmount"];
@@ -104,6 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         );
                         transactionWidgets.add(transactionWidget);
+
                       }
                     }
                     return Expanded(
@@ -112,7 +114,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           for (var transactionWidget in transactionWidgets)
                             Container(
                               height: 100,
-                              color: Colors.amber[600],
+                              decoration: BoxDecoration(
+                                color: Colors.amber[700],
+                                border:  Border(
+                                  bottom: BorderSide(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    width: 1,
+                                  ),
+
+                                )
+                            ),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -127,12 +138,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                     ),
+                                    flex: 2,
                                   ),
                                   Expanded(
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Text(
-                                        (transactionWidget as Row).children[1].toString(), // Accessing transactionAmount
+                                        (transactionWidget as Row).children[2].toString(), // Accessing transactionAmount
                                           textAlign: TextAlign.center, // Adjust as needed
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
@@ -140,12 +152,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
                                     ),
+                                    flex: 1,
                                   ),
                                   Expanded(
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          (transactionWidget as Row).children[2].toString(), // Accessing transactionType
+                                          (transactionWidget as Row).children[1].toString(), // Accessing transactionType
                                           textAlign: TextAlign.right, // Adjust as needed
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
@@ -153,6 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
                                       ),
+                                    flex: 1,
                                   ), // Accessing transactionType
                                 ],
                               ),
