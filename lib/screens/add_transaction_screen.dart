@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:financemanagement/screens/analytic_screen.dart';
 import 'package:financemanagement/screens/home_screen.dart';
 import 'package:financemanagement/screens/profile_screen.dart';
@@ -13,6 +15,7 @@ import 'package:financemanagement/reusable_widget/reusable_widget.dart';
 
 
 const List<String> transactionTypeList = ["Income", "Expense"];
+const List<String> transactionCategoryList = ["Food", "Transport", "Shopping", "Others"];
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -25,8 +28,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   TextEditingController transactionName = TextEditingController();
   TextEditingController transactionAmount = TextEditingController();
   TextEditingController transactionType = TextEditingController();
+  TextEditingController transactionCategory = TextEditingController();
+  TextEditingController transactionDescription = TextEditingController();
+
   int timestamp = DateTime.now().millisecondsSinceEpoch;
-  String dropdownValue = transactionTypeList.first;
+  String transactionTypeValue = transactionTypeList.first;
+  String transactionCategoryValue = transactionCategoryList.first;
 
   @override
   Widget build(BuildContext context) {
@@ -47,25 +54,126 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 10),
                         child: Text(
-                          "Add Transaction",
+                          "Add Transaction: ",
                           style: TextStyle(
-                            fontSize: 30,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                         ),
                       ),
                       )
                     ),
                     Expanded(
-                      flex: 2,
+                      flex: 3,
                         child: reusableTextField("Enter Transaction Name", Icons.person_outline, false, transactionName),
                     )],
                 ),
                 SizedBox(height: 30),
-                reusableTextField("Enter Transaction Amount", Icons.lock_outline, false, transactionAmount),
+                Row(
+                    children: [
+                    Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Text(
+                        "Transaction Amount: ",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                ),
+                Expanded(
+                  flex: 3,
+                  child: reusableTextField("Enter Transaction Amount", Icons.lock_outline, false, transactionAmount),
+                )],
+                ),
+                SizedBox(height: 30),
+                Row(
+                  children: [
+                    Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: Text(
+                            "Transaction Description: ",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: reusableTextField("Enter Transaction Description", Icons.lock_outline, false, transactionDescription),
+                    )],
+                ),
                 SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: Text(
+                            "Transaction Category: ",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child:
+                      Container(
+                        width: 200, // Set width to screen width
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        child: DropdownButton<String>
+                          (value: transactionCategoryValue,
+                          elevation: 16,
+                          style: const TextStyle(color: Colors.grey),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              transactionCategoryValue = newValue!;
+                            });
+                          },
+                          items: transactionCategoryList.map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value)
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    )],
+                ),
+                SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: Text(
+                            "Transaction Type: ",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child:
                     Container(
                       width: 200, // Set width to screen width
                       decoration: BoxDecoration(
@@ -73,23 +181,23 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         borderRadius: BorderRadius.circular(5.0),
                       ),
                         child: DropdownButton<String>
-                          (value: dropdownValue,
+                          (value: transactionTypeValue,
                           elevation: 16,
                           style: const TextStyle(color: Colors.grey),
                           onChanged: (String? newValue) {
                             setState(() {
-                              dropdownValue = newValue!;
+                              transactionTypeValue = newValue!;
                             });
                           },
                           items: transactionTypeList.map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
-                              child: Text(value),
+                              child: Text(value)
                             );
                           }).toList(),
                         ),
                     ),
-                  ],
+                    )],
                 ),
                 SizedBox(height: 30),
                 signInButton(context, "Add Transaction", Colors.blue, (){
@@ -97,7 +205,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   collRef.add({
                     "transactionName": transactionName.text,
                     "transactionAmount": transactionAmount.text,
-                    "transactionType": transactionType.text,
+                    "transactionType": transactionTypeValue,
+                    "transactionCategory": transactionCategoryValue,
+                    "transactionDescription": transactionDescription.text,
                     "transactionTime": timestamp
                   }).then((value) {
                     Navigator.push(context,

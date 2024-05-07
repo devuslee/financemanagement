@@ -96,12 +96,25 @@ class _HomeScreenState extends State<HomeScreen> {
                         final transactionName = transaction["transactionName"];
                         final transactionAmount = transaction["transactionAmount"];
                         final transactionType = transaction["transactionType"];
+                        final transactionDescription = transaction["transactionDescription"];
+                        String transactionCategory = "";
 
+                        if (transaction["transactionCategory"] == "Food") {
+                          transactionCategory = "food.png";
+                        } else if (transaction["transactionCategory"] == "Transport") {
+                          transactionCategory = "transport.png";
+                        } else if (transaction["transactionCategory"] == "Shopping") {
+                          transactionCategory = "shopping.png";
+                        } else if (transaction["transactionCategory"] == "Others") {
+                          transactionCategory = "others.png";
+                        }
                         final transactionWidget = Row(
                           children: [
                             Text(transactionName),
                             Text(transactionAmount),
-                            Text(transactionType)
+                            Text(transactionType),
+                            Text(transactionCategory),
+                            Text(transactionDescription),
                           ],
                         );
                         transactionWidgets.add(transactionWidget);
@@ -109,76 +122,75 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
                     }
                     return Expanded(
-                      child: ListView(
-                        children: <Widget>[
-                          for (var transactionWidget in transactionWidgets)
-                            Container(
-                              height: 100,
-                              decoration: BoxDecoration(
-                                color: Colors.amber[700],
-                                border:  Border(
-                                  bottom: BorderSide(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    width: 1,
-                                  ),
+                      child: CustomScrollView(
+                        slivers: [
+                          SliverPadding(
+                            padding: EdgeInsets.all(8.0),
+                            sliver: SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                    (context, index) {
+                                  List<Widget> tiles = [];
 
-                                )
-                            ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        (transactionWidget as Row).children[0].toString(), // Accessing transactionName
-                                        textAlign: TextAlign.left, // Adjust as needed
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                    flex: 2,
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        (transactionWidget as Row).children[2].toString(), // Accessing transactionAmount
-                                          textAlign: TextAlign.center, // Adjust as needed
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
+                                  for (var transactionWidget in transactionWidgets) {
+                                    tiles.add(
+                                      ListTile(
+                                        leading: ClipRRect(
+                                          borderRadius: BorderRadius.circular(8.0),
+                                          child: Image.asset(
+                                            "assets/images/${(((transactionWidget as Row).children[3] as Text).data ?? '')}",
                                           ),
                                         ),
-                                    ),
-                                    flex: 1,
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          (transactionWidget as Row).children[1].toString(), // Accessing transactionType
-                                          textAlign: TextAlign.right, // Adjust as needed
+                                        title: Text(
+                                          //if empty it will print out null, PURELY FOR TESTING
+                                          (((transactionWidget as Row).children[0] as Text).data ?? '').isEmpty
+                                              ? 'Null'
+                                              : ((transactionWidget as Row).children[0] as Text).data!,
                                           style: TextStyle(
+                                            fontSize: 20,
                                             fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                          (((transactionWidget as Row).children[4] as Text).data ?? '').isEmpty
+                                              ? 'Null'
+                                              : ((transactionWidget as Row).children[4] as Text).data!,
+                                          style: TextStyle(
                                             fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        trailing: Text(
+                                          (((transactionWidget as Row).children[1] as Text).data ?? '').isEmpty
+                                              ? 'Null'
+                                              : ((transactionWidget as Row).children[1] as Text).data!,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.green,
                                           ),
                                         ),
                                       ),
-                                    flex: 1,
-                                  ), // Accessing transactionType
-                                ],
+                                    );
+                                  }
+
+                                  return Column(
+                                    children: tiles,
+                                  );
+                                },
+                                childCount: 1,
                               ),
                             ),
+                          ),
                         ],
                       ),
                     );
-                  },
-                ),
-              ]),
-        ),
+            }
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  ),
+);
 }
+}
+
