@@ -4,6 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+String? globalUID;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -14,6 +16,7 @@ void main() async {
       projectId: "financemanagement-ead7b",
     ),
   );
+  await getUserID();
   runApp(const MyApp());
 }
 
@@ -44,7 +47,24 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+
       home: const SignInScreen(),
     );
+  }
+}
+
+
+Future<void> getUserID() async {
+  try {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
+    if (user != null) {
+      globalUID = user.uid;
+      print("User ID: ${user.uid}");
+    } else {
+      print("User is not signed in");
+    }
+  } catch (e) {
+    print("Error retrieving user ID: $e");
   }
 }

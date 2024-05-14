@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:financemanagement/reusable_widget/reusable_widget.dart';
+import 'package:intl/intl.dart';
+
 
 
 class HomeScreen extends StatefulWidget {
@@ -23,9 +25,46 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int currentPageIndex = 0;
 
+  DateTime _currentDate = DateTime.now();
+  final dateFormat = DateFormat('yyyy-MM-dd');
+
+
+  // Function to format the date manually
+  String formatDate(DateTime date) {
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    String day = date.day.toString();
+    String month = monthNames[date.month - 1];
+    String year = date.year.toString();
+
+    return '$day, $month $year';
+  }
+
+  void _incrementDate() {
+    setState(() {
+      _currentDate = _currentDate.add(Duration(days: 1));
+    });
+  }
+
+  void _decrementDate() {
+    setState(() {
+      _currentDate = _currentDate.subtract(Duration(days: 1));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    String formattedDate = formatDate(_currentDate);
+
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Home"),
+        backgroundColor: Colors.blue,
+        automaticallyImplyLeading: false,
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentPageIndex,
         onDestinationSelected: (int index) {
@@ -71,17 +110,29 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: CircleBorder(),
-                    padding: EdgeInsets.all(24),
-                  ),
-                  onPressed: () {
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AddTransactionScreen()));
-                  },
-                  child: Text("+"),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(onPressed: _decrementDate,
+                        icon: Icon(
+                          Icons.arrow_left,
+                          size: 50,
+                        )
+                    ),
+                    Text(
+                      formattedDate,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    IconButton(onPressed: _incrementDate,
+                        icon: Icon(
+                          Icons.arrow_right,
+                          size: 50,
+                        )
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20),
                 StreamBuilder<QuerySnapshot>(
@@ -98,6 +149,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         final transactionType = transaction["transactionType"];
                         final transactionDescription = transaction["transactionDescription"];
                         String transactionCategory = "";
+                        final transactionUserID = transaction["transactionUserID"];
+                        final transactionTime = transaction["transactionTime"];
+
+                        DateTime transactionDateTime = DateTime.fromMillisecondsSinceEpoch(transactionTime);
 
                         if (transaction["transactionCategory"] == "Food") {
                           transactionCategory = "food.png";
@@ -117,8 +172,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             Text(transactionDescription),
                           ],
                         );
-                        transactionWidgets.add(transactionWidget);
-
+                        if (transactionUserID == FirebaseAuth.instance.currentUser!.uid &&
+                            transactionDateTime.year == _currentDate.year &&
+                            transactionDateTime.month == _currentDate.month &&
+                            transactionDateTime.day == _currentDate.day) {
+                          transactionWidgets.add(transactionWidget);
+                        }
                       }
                     }
                     return Expanded(
@@ -186,11 +245,23 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
             }
           ),
-        ],
+              ],
+            ),
+          ),
+        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddTransactionScreen(),
+            ),
+          );
+        },
+        child: Icon(Icons.add),
       ),
-    ),
-  ),
-);
-}
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    );
+  }
 }
 
