@@ -26,12 +26,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [
-              hexStringToColor("CB2B93"),
-              hexStringToColor("6610F2"),
-              hexStringToColor("1A1A1A")
-            ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.fromLTRB(
@@ -44,7 +38,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 SizedBox(height: 30),
                 reusableTextField("Enter confirm password", Icons.lock_outline, true, confirmpasswordController),
                 SizedBox(height: 30),
-                signInButton(context, "Sign Up", Colors.white, (){
+                signInButton(context, "Sign Up", Colors.grey.shade300, (){
                   FirebaseAuth.instance.createUserWithEmailAndPassword(
                       email: emailController.text,
                       password: passwordController.text)
@@ -70,8 +64,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Text(
-          "Already have an account?",
-          style: TextStyle(color: Colors.white70),
+          "Already have an account? ",
+          style: TextStyle(color: Colors.black),
         ),
         GestureDetector(
           onTap: () {
@@ -81,7 +75,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           },
           child: const Text(
             "Sign In",
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold
             ),
           ),
         )],

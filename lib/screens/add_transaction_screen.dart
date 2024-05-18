@@ -11,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:financemanagement/reusable_widget/reusable_widget.dart';
 import 'package:financemanagement/main.dart';
+import 'package:flutter/widgets.dart';
 
 bool isButtonEnabled = true;
 int milidate = DateTime.now().millisecondsSinceEpoch;
@@ -65,7 +66,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Add Transaction"),
-        backgroundColor: Colors.blue,
+        backgroundColor: appbar,
       ),
       body: Container(
         child: Stack(
@@ -161,7 +162,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         ),
                       ),
                       Expanded(
-                        flex: 1,
+                        flex: 2,
                         child: Container(
                           width: 200, // Set width to screen width
                           decoration: BoxDecoration(
@@ -169,6 +170,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             borderRadius: BorderRadius.circular(5.0),
                           ),
                           child: DropdownButton<String>(
+                            padding: EdgeInsets.all(10),
                             value: transactionCategoryValue,
                             elevation: 16,
                             style: const TextStyle(color: Colors.grey),
@@ -184,6 +186,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             }).toList(),
                           ),
                         ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: SizedBox(width: 10),
                       ),
                     ],
                   ),
@@ -202,7 +208,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         ),
                       ),
                       Expanded(
-                        flex: 1,
+                        flex: 2,
                         child: Container(
                           width: 200, // Set width to screen width
                           decoration: BoxDecoration(
@@ -210,6 +216,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             borderRadius: BorderRadius.circular(5.0),
                           ),
                           child: DropdownButton<String>(
+                            padding: EdgeInsets.all(10),
                             value: transactionTypeValue,
                             elevation: 16,
                             style: const TextStyle(color: Colors.grey),
@@ -225,6 +232,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             }).toList(),
                           ),
                         ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: SizedBox(width: 10),
                       ),
                     ],
                   ),
@@ -243,7 +254,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         ),
                       ),
                       Expanded(
-                        flex: 1,
+                        flex: 2,
                         child: TextField(
                           readOnly: true  ,
                         decoration: InputDecoration(
@@ -254,6 +265,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       ),
                       Expanded(
                         flex: 1,
+                        child: SizedBox(width: 10),
+                      ),
+                      SizedBox(
+                        width: 60,
+                        height: 60,
                         child: IconButton(onPressed: () async{
                           DateTime? date=await
                           showDatePicker(context: context,
@@ -267,37 +283,42 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       ),
                     ],
                   ),
-                  signInButton(context, "Add Transaction", Colors.blue, () {
-
-                    CollectionReference collRef =
-                        FirebaseFirestore.instance.collection("Transaction");
-                    collRef.add({
-                      "transactionName": transactionName.text,
-                      "transactionAmount": transactionAmount.text,
-                      "transactionType": transactionTypeValue,
-                      "transactionCategory": transactionCategoryValue,
-                      "transactionDescription": transactionDescription.text,
-                      "transactionTime": milidate,
-                      "transactionUserID": globalUID
-                    }).then((value) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HomeScreen()));
-                    }).onError((error, stackTrace) {
-                      print("Error: $error");
-                    }).whenComplete(() {
-                      setState(() {
-                        // Re-enable the button after transaction is complete or failed
-                        isButtonEnabled = true;
-                      });
-                    });
-                  }),
                 ],
               ),
             ),
           ],
         ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+              CollectionReference collRef =
+                  FirebaseFirestore.instance.collection("Transaction");
+              collRef.add({
+                "transactionName": transactionName.text,
+                "transactionAmount": transactionAmount.text,
+                "transactionType": transactionTypeValue,
+                "transactionCategory": transactionCategoryValue,
+                "transactionDescription": transactionDescription.text,
+                "transactionTime": milidate,
+                "transactionUserID": globalUID
+              }).then((value) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HomeScreen()));
+              }).onError((error, stackTrace) {
+                print("Error: $error");
+              }).whenComplete(() {
+                setState(() {
+                  // Re-enable the button after transaction is complete or failed
+                  isButtonEnabled = true;
+                });
+              });
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Colors.blue,
       ),
     );
   }

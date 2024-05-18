@@ -12,6 +12,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:financemanagement/reusable_widget/reusable_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:financemanagement/main.dart';
 
 
 
@@ -62,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Home"),
-        backgroundColor: Colors.blue,
+        backgroundColor: appbar,
         automaticallyImplyLeading: false,
       ),
       bottomNavigationBar: NavigationBar(
@@ -139,6 +140,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     stream: FirebaseFirestore.instance.collection("Transaction").snapshots(),
                     builder: (context, snapshot) {
                     List<Row> transactionWidgets = [];
+                    int totalIncome = 0;
+                    int totalExpense = 0;
+
+
 
                     if(snapshot.hasData) {
                       final transactions = snapshot.data?.docs.toList();
@@ -177,12 +182,82 @@ class _HomeScreenState extends State<HomeScreen> {
                             transactionDateTime.month == _currentDate.month &&
                             transactionDateTime.day == _currentDate.day) {
                           transactionWidgets.add(transactionWidget);
+                          if (transactionType == "Income") {
+                            totalIncome += int.parse(transactionAmount);
+                          } else {
+                            totalExpense += int.parse(transactionAmount);
+                          }
                         }
                       }
                     }
                     return Expanded(
                       child: CustomScrollView(
                         slivers: [
+                          SliverToBoxAdapter(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                    Text(
+                                      "Total Expenses: ",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    Text(
+                                      "\$${(totalExpense)}",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+
+                                    SizedBox(width: 20),
+                                    Text(
+                                      "Total Income: ",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    Text(
+                                      "\$${(totalIncome)}",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                    SizedBox(width: 20),
+                                    Text(
+                                      "Total Balance: ",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    Text(
+                                      "\$${(totalIncome - totalExpense)}",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: totalIncome - totalExpense > 0
+                                            ? Colors.green
+                                            : totalIncome - totalExpense < 0
+                                            ? Colors.red
+                                            : Colors.grey,
+                                      ),
+                                    ),
+                                ],
+                               ),
+                              ],
+                            ),
+                          ),
+                        ),
                           SliverPadding(
                             padding: EdgeInsets.all(8.0),
                             sliver: SliverList(
@@ -192,7 +267,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                   for (var transactionWidget in transactionWidgets) {
                                     tiles.add(
-                                      ListTile(
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                              color: Colors.grey.withOpacity(0.3),
+                                              width: 1.0, // Adjust the thickness of the underline
+                                            ),
+                                          ),
+                                        ),
+                                      child: ListTile(
                                         leading: ClipRRect(
                                           borderRadius: BorderRadius.circular(8.0),
                                           child: Image.asset(
@@ -219,18 +303,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
                                         trailing: Text(
-                                          (((transactionWidget as Row).children[1] as Text).data ?? '').isEmpty
-                                              ? 'Null'
-                                              : ((transactionWidget as Row).children[1] as Text).data!,
+                                            (((transactionWidget as Row).children[1] as Text).data ?? '').isEmpty
+                                                ? 'Null'
+                                                : ((transactionWidget as Row).children[2] as Text).data == 'Expense'
+                                                ? "-" + ((transactionWidget as Row).children[1] as Text).data!
+                                                : ((transactionWidget as Row).children[1] as Text).data!,
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.green,
+                                            color: ((transactionWidget as Row).children[2] as Text).data == 'Income'
+                                                ? Colors.green
+                                                : Colors.red,
+                                            )
                                           ),
                                         ),
                                       ),
                                     );
                                   }
+
+
 
                                   return Column(
                                     children: tiles,

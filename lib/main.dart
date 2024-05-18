@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 String? globalUID;
 
+Color appbar = Colors.grey.shade100;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
