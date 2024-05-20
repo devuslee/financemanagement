@@ -1,6 +1,6 @@
-import 'package:financemanagement/screens/analytic_screen.dart';
+import 'package:financemanagement/screens/analytic_content.dart';
 import 'package:financemanagement/screens/home_screen.dart';
-import 'package:financemanagement/screens/profile_screen.dart';
+import 'package:financemanagement/screens/profile_content.dart';
 import 'package:financemanagement/screens/signin_screen.dart';
 import 'package:financemanagement/screens/signup_screen.dart';
 import 'package:financemanagement/utils/color.dart';
