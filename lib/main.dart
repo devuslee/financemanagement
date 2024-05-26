@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:financemanagement/screens/signin_screen.dart';
 import 'package:financemanagement/screens/signup_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 
 String? globalUID;
 

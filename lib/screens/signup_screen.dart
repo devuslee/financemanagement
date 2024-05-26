@@ -1,12 +1,17 @@
+import 'package:financemanagement/screens/analytic_content.dart';
 import 'package:financemanagement/screens/home_screen.dart';
+import 'package:financemanagement/screens/profile_content.dart';
 import 'package:financemanagement/screens/signin_screen.dart';
 import 'package:financemanagement/screens/signup_screen.dart';
 import 'package:financemanagement/utils/color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:financemanagement/reusable_widget/reusable_widget.dart';
+import 'package:financemanagement/main.dart';
+import 'package:flutter/widgets.dart';
 
 
 class SignUpScreen extends StatefulWidget {
@@ -38,15 +43,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 SizedBox(height: 30),
                 reusableTextField("Enter confirm password", Icons.lock_outline, true, confirmpasswordController),
                 SizedBox(height: 30),
-                signInButton(context, "Sign Up", Colors.grey.shade300, (){
+                signInButton(context, "Sign Up", Colors.grey.shade300, () {
                   FirebaseAuth.instance.createUserWithEmailAndPassword(
                       email: emailController.text,
                       password: passwordController.text)
                       .then((value) {
-                        Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()));
-                      }).onError((error, stackTrace) {
-                    print("Error: $error");
+                    FirebaseFirestore.instance.collection("Users").doc(
+                        FirebaseAuth.instance.currentUser?.uid).set({
+                      "email": emailController.text,
+                      "password": passwordController.text,
+                      "userBudget": 0,
+                      "userCurrency": "MYR",
+                      "userDecimal": 0,
+                      "userPosition": "Left",
+                    }).then((value) {
+                      Navigator.push(context,
+                          MaterialPageRoute(
+                              builder: (context) => HomeScreen()));
+                    }).onError((error, stackTrace) {
+                      print("Error: $error");
+                    });
                   });
                 }),
                 SizedBox(height: 20),

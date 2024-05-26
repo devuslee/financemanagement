@@ -83,7 +83,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         child: Text(
                           "Add Transaction: ",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -107,7 +107,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         child: Text(
                           "Transaction Amount: ",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -131,7 +131,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         child: Text(
                           "Transaction Description: ",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -156,7 +156,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         child: Text(
                           "Transaction Category: ",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -202,7 +202,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         child: Text(
                           "Transaction Type: ",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -248,7 +248,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         child: Text(
                           "Transaction Time: ",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
