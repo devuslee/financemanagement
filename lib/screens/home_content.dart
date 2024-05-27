@@ -374,7 +374,7 @@ String formatCurrency(int amount, String currency, String position, int decimalP
 
   // Adjust position if necessary
   if (position.toLowerCase() == "right") {
-    formattedAmount = formattedAmount.replaceAll("\$", "") + currency;
+    formattedAmount = formattedAmount.replaceAll("${currency}", "") + currency;
   }
 
   return formattedAmount;
