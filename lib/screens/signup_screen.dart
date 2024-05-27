@@ -57,12 +57,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       "userDecimal": 0,
                       "userPosition": "Left",
                     }).then((value) {
-                      Navigator.push(context,
-                          MaterialPageRoute(
-                              builder: (context) => HomeScreen()));
+                      FirebaseFirestore.instance.collection("Categories").doc(
+                          FirebaseAuth.instance.currentUser?.uid).set({
+                        "Food": "Food",
+                        "Transport": "Transport",
+                        "Shopping": "Shopping",
+                      }).then((value) {
+                        Navigator.push(context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen()));
+                      }).onError((error, stackTrace) {
+                        print("Error: $error");
+                      });
                     }).onError((error, stackTrace) {
                       print("Error: $error");
                     });
+                  }).onError((error, stackTrace) {
+                    print("Error: $error");
                   });
                 }),
                 SizedBox(height: 20),

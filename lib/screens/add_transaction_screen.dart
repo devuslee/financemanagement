@@ -17,12 +17,7 @@ bool isButtonEnabled = true;
 int milidate = DateTime.now().millisecondsSinceEpoch;
 
 const List<String> transactionTypeList = ["Income", "Expense"];
-const List<String> transactionCategoryList = [
-  "Food",
-  "Transport",
-  "Shopping",
-  "Others"
-];
+final List<String> transactionCategoryList = ["Loading..."];
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -41,7 +36,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   int timestamp = DateTime.now().millisecondsSinceEpoch;
   String transactionTypeValue = transactionTypeList.first;
-  String transactionCategoryValue = transactionCategoryList.first;
+  String transactionCategoryValue = transactionCategoryList.isNotEmpty ? transactionCategoryList.first : '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCategories();
+  }
 
   DateTime _currentDate = DateTime.now();
 
@@ -57,6 +58,41 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     String year = date.year.toString();
 
     return '$day, $month $year';
+  }
+
+  Future<void> fetchCategories() async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await FirebaseFirestore.instance
+          .collection('Categories')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      if (documentSnapshot.exists) {
+        Map<String, dynamic>? data = documentSnapshot.data();
+
+        if (data != null) {
+          List<String> categories = [];
+          data.forEach((key, value) {
+            categories.add(value.toString());
+          });
+
+          categories.sort(); //make sure the categories always display in the same manner
+
+
+          setState(() {
+            transactionCategoryList.clear();
+            transactionCategoryList.addAll(categories);
+            if (transactionCategoryList.isNotEmpty) {
+              transactionCategoryValue = transactionCategoryList.first;
+            }
+          });
+        }
+      } else {
+        print("Document does not exist");
+      }
+    } catch (e) {
+      print("Failed to fetch categories: $e");
+    }
   }
 
   @override
@@ -304,6 +340,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 "transactionTime": milidate,
                 "transactionUserID": globalUID
               }).then((value) {
+                transactionCategory.clear();
                 Navigator.push(
                     context,
                     MaterialPageRoute(

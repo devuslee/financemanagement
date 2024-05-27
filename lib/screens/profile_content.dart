@@ -15,16 +15,17 @@ import 'package:financemanagement/screens/update_password_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+
+class ProfileContent extends StatefulWidget {
+  const ProfileContent({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileContent> createState() => _ProfileScreenState();
 
 
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileContent> {
   String currencyvalue = "Loading...";
   int decimalvalue = 0;
   String positionvalue = "Loading...";
@@ -133,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: Text("Bug Report"),
+                                    title: Text("Currency Settings"),
                                     content: SingleChildScrollView(
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,7 +173,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: Text("Bug Report"),
+                                    title: Text("Currency position"),
                                     content: SingleChildScrollView(
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: Text("Bug Report"),
+                                    title: Text("Decimal places"),
                                     content: SingleChildScrollView(
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,

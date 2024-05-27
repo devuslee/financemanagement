@@ -14,6 +14,7 @@ import 'package:financemanagement/reusable_widget/reusable_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:financemanagement/main.dart';
 import 'package:financemanagement/screens/home_content.dart';
+import 'package:financemanagement/screens/category_content.dart';
 
 
 
@@ -29,8 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _pages = [
     HomeContent(),
-    AnalyticsScreen(),
-    ProfileScreen(),
+    AnalyticsContent(),
+    CategoryContent(),
+    ProfileContent(),
   ];
 
   @override
@@ -59,6 +61,11 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.analytics_outlined),
             selectedIcon: Icon(Icons.analytics),
             label: 'Analytics',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.category_outlined),
+            selectedIcon: Icon(Icons.category),
+            label: 'Category',
           ),
           NavigationDestination(
             icon: Icon(Icons.account_circle_outlined),
