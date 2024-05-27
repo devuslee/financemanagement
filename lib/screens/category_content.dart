@@ -70,10 +70,10 @@ class _CategoryContentState extends State<CategoryContent> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: CustomScrollView(
+    return CustomScrollView(
         slivers: [
           SliverPadding(
             padding: EdgeInsets.all(8.0),
@@ -113,7 +113,8 @@ class _CategoryContentState extends State<CategoryContent> {
                               Icons.arrow_forward_ios,
                               color: Colors.grey,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                            },
                           ),
                         ),
                       ),
@@ -121,16 +122,14 @@ class _CategoryContentState extends State<CategoryContent> {
                   }
 
                   return Column(
-                    //if tiles empty return something else else
+                    // If tiles is empty, return the "No transactions found" message, else return the tiles
                     children: tiles.isEmpty
                         ? [
-
                       Center(
                         child: Padding(
                           padding: const EdgeInsets.all(150),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment
-                                .center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
                                 height: 100,
@@ -152,17 +151,143 @@ class _CategoryContentState extends State<CategoryContent> {
                             ],
                           ),
                         ),
-                      ),
+                      ), // Add the "hello" text here
                     ]
-                        : tiles,
+                        : [
+
+                      ...tiles,
+                      Container(
+                        padding: EdgeInsets.all(20),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                String categoryName = ''; // Store the input category name
+                                IconData selectedIcon = Icons.category;
+                                return StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return AlertDialog(
+                                      title: Text('Add Category'),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          TextField(
+                                            onChanged: (value) {
+                                              categoryName = value; // Update the category name when input changes
+                                            },
+                                            decoration: InputDecoration(
+                                              hintText: 'Enter Category Name',
+                                            ),
+                                          ),
+                                          SizedBox(height: 20),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.fastfood,
+                                                  color: selectedIcon == Icons.fastfood ? Colors.blue : Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedIcon = Icons.fastfood;
+                                                  });
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.shopping_cart,
+                                                  color: selectedIcon == Icons.shopping_cart ? Colors.blue : Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedIcon = Icons.shopping_cart;
+                                                  });
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.home,
+                                                  color: selectedIcon == Icons.home ? Colors.blue : Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedIcon = Icons.home;
+                                                  });
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.local_hospital,
+                                                  color: selectedIcon == Icons.local_hospital ? Colors.blue : Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedIcon = Icons.local_hospital;
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                        ),
+                                      ],
+                                    ),
+                                      actions: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            // Perform actions when the 'Add' button is pressed
+                                            // You can add category to Firestore here
+                                            Navigator.of(context).pop(); // Close the dialog
+                                          },
+                                          child: Text('Add'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop(); // Close the dialog
+                                          },
+                                          child: Text('Cancel'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          child: Text(
+                            "Add Category",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black.withOpacity(0.7),
+                            ),
+                          ),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                              Colors.grey.withOpacity(0.1),
+                            ),
+                            padding: MaterialStateProperty.all(
+                              EdgeInsets.symmetric(
+                                vertical: 15,
+                                horizontal: 30,
+                              ),
+                            ),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
                   );
                 },
                 childCount: 1,
               ),
             ),
           ),
-    ],
-    ),
-    );
+        ],
+      );
   }
 }
+

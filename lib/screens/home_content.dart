@@ -260,7 +260,7 @@ class _HomeContentState extends State<HomeContent> {
                                             "assets/images/${(((transactionWidget as Row)
                                                 .children[3] as Text).data ??
                                                 '')}",
-                                          ),
+                                          ), //Change to icons later
                                         ),
                                         title: Text(
                                           (((transactionWidget as Row)
