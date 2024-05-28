@@ -27,6 +27,11 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
   DateTime _currentDate = DateTime.now();
   final dateFormat = DateFormat('yyyy-MM-dd');
 
+  void initState() {
+    super.initState();
+    calculateCategoryTotals(); // Load currency value from Firestore
+  }
+
   String formatDate(DateTime date) {
     const monthNames = [
       'January', 'February', 'March', 'April', 'May', 'June',
@@ -51,9 +56,45 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
       _currentDate = _currentDate.subtract(Duration(days: 1));
     });
   }
+
+  void calculateCategoryTotals() {
+    Map<String, int> categoryTotals = {}; // Map to store category totals
+
+    // Get current user's ID
+    String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
+    // Fetch all transactions from Firestore
+    FirebaseFirestore.instance.collection('Transaction').get().then((querySnapshot) {
+      // Iterate through each transaction document
+      querySnapshot.docs.forEach((doc) {
+        String userId = doc['transactionUserID']; // Get user ID from transaction
+        if (userId == currentUserId) {
+          String category = doc['transactionCategory'];
+          int amount = int.parse(doc['transactionAmount']);
+
+          // Update category total in the map
+          categoryTotals.update(category, (value) => value + amount, ifAbsent: () => amount);
+        }
+      });
+
+      // Print category totals
+      categoryTotals.forEach((category, total) {
+        print('Category: $category, Total: $total');
+      });
+    }).catchError((error) {
+      print('Error fetching transactions: $error');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     String formattedDate = formatDate(_currentDate);
+    final List<ChartData> chartData = [
+      ChartData('David', 25),
+      ChartData('Steve', 38),
+      ChartData('Jack', 34),
+      ChartData('Others', 52)
+    ];
 
     return Center(
       child: Padding(
@@ -67,10 +108,7 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
                   List<Row> transactionWidgets = [];
                   int totalIncome = 0;
                   int totalExpense = 0;
-                  String userCurrency = "";
-                  int userBudget = 0;
-                  int userDecimal = 0;
-                  String userPosition = "";
+
 
                   if (transactionSnapshot.hasData) {
                     final transactions = transactionSnapshot.data?.docs
@@ -122,9 +160,35 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
                       }
                     }
                   }
-                  return Expanded(child: Text("Total Income: $totalIncome\nTotal Expense: $totalExpense"));
+                  return Expanded(
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Total Income: $totalIncome"),
+                            Text("Total Expense: $totalExpense"),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+
+
                 }
-                )
+                ),
+            SfCircularChart(
+                series: <CircularSeries>[
+                  // Render pie chart
+                  PieSeries<ChartData, String>(
+                    dataSource: chartData,
+                    pointColorMapper:(ChartData data,  _) => data.color,
+                    xValueMapper: (ChartData data, _) => data.x,
+                    yValueMapper: (ChartData data, _) => data.y,
+                    radius: '50%',
+                  )
+                ]
+            )
           ],
         )
       ),
@@ -132,10 +196,9 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
   }
 }
 
-class SalesData {
-  SalesData(this.year, this.sales);
-  final String year;
-  final double sales;
+class ChartData {
+  ChartData(this.x, this.y, [this.color]);
+  final String x;
+  final double y;
+  final Color? color;
 }
-
-

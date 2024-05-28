@@ -54,6 +54,7 @@ class _HomeContentState extends State<HomeContent> {
   Widget build(BuildContext context) {
     String formattedDate = formatDate(_currentDate);
 
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -94,6 +95,10 @@ class _HomeContentState extends State<HomeContent> {
                     stream: FirebaseFirestore.instance.collection("Users").doc(
                         FirebaseAuth.instance.currentUser!.uid).snapshots(),
                     builder: (context, userSnapshot) {
+                      return StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance.collection("Categories").doc(
+                              FirebaseAuth.instance.currentUser!.uid).snapshots(),
+                          builder: (context, categoriesSnapshot) {
                   List<Row> transactionWidgets = [];
                   int totalIncome = 0;
                   int totalExpense = 0;
@@ -101,6 +106,7 @@ class _HomeContentState extends State<HomeContent> {
                   int userBudget = 0;
                   int userDecimal = 0;
                   String userPosition = "";
+                  String userCategory = "";
 
                   if (userSnapshot.hasData) {
                     final tempuserCurrency = userSnapshot.data?.get("userCurrency");
@@ -131,34 +137,42 @@ class _HomeContentState extends State<HomeContent> {
                       DateTime transactionDateTime = DateTime
                           .fromMillisecondsSinceEpoch(transactionTime);
 
-                      if (transaction["transactionCategory"] == "Food") {
+                      if (categoriesSnapshot.hasData) {
+                        final tempcategories = categoriesSnapshot.data?.get(transaction["transactionCategory"]);
+
+                        userCategory = tempcategories;
+                      }
+
+                      print(userCategory);
+
+                      if (userCategory == "Food") {
                         transactionCategory = Icons.fastfood;
                       } else
-                      if (transaction["transactionCategory"] == "Home") {
+                      if (userCategory  == "Home") {
                         transactionCategory = Icons.home;
                       } else
-                      if (transaction["transactionCategory"] == "Person") {
+                      if (userCategory  == "Person") {
                         transactionCategory = Icons.person;
                       } else
-                      if (transaction["transactionCategory"] == "Shopping") {
+                      if (userCategory  == "Shopping") {
                         transactionCategory = Icons.shopping_cart;
                       } else
-                      if (transaction["transactionCategory"] == "Car") {
+                      if (userCategory  == "Car") {
                         transactionCategory = Icons.car_rental;
                       } else
-                      if (transaction["transactionCategory"] == "Health") {
+                      if (userCategory  == "Health") {
                         transactionCategory = Icons.health_and_safety;
                       } else
-                      if (transaction["transactionCategory"] == "Education") {
+                      if (userCategory  == "Education") {
                         transactionCategory = Icons.book;
                       } else
-                      if (transaction["transactionCategory"] == "Entertainment") {
+                      if (userCategory  == "Entertainment") {
                         transactionCategory = Icons.movie;
                       } else
-                      if (transaction["transactionCategory"] == "Baby") {
+                      if (userCategory  == "Baby") {
                         transactionCategory = Icons.baby_changing_station;
                       } else
-                      if (transaction["transactionCategory"] == "Social") {
+                      if (userCategory  == "Social") {
                         transactionCategory = Icons.event;
                       }
 
@@ -377,6 +391,8 @@ class _HomeContentState extends State<HomeContent> {
                 },
                 );
               },
+              );
+            },
             ),
           ],
         ),
@@ -400,4 +416,22 @@ String formatCurrency(int amount, String currency, String position, int decimalP
   }
 
   return formattedAmount;
+}
+
+String fetchCategoryIcon(String categoryName) {
+    String tempIconName = "";
+
+    Future<DocumentSnapshot<Map<String, dynamic>>> categoryRef = FirebaseFirestore.instance
+        .collection("Categories")
+        .doc(FirebaseAuth.instance.currentUser!.uid).get();
+
+    // Fetch the category document
+    categoryRef.then((categoryDoc) {
+      if (categoryDoc.exists) {
+        String iconName = categoryDoc[categoryName];
+        // Get the icon name based on the category name
+        tempIconName = iconName;
+      }
+    });
+    return tempIconName;
 }

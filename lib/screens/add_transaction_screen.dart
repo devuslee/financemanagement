@@ -82,7 +82,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           List<List<String>> categories = [];
           data.forEach((key, value) {
             categories.add([key.toString(), value.toString()]);
-            print(categories);
           });
 
           categories.sort((a, b) =>
@@ -342,22 +341,22 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-              DocumentReference docRef =
-                  FirebaseFirestore.instance.collection("Categories").doc(globalUID);
-
-              DocumentSnapshot docSnapshot = await docRef.get();
-
-              if (docSnapshot.exists) {
-                transactionCategoryValue = docSnapshot['${transactionCategoryValue}'];
-                if (transactionCategoryValue != null) {
-                  // Use the transactionCategoryValue here
-                  print("Transaction Category Value: $transactionCategoryValue");
-                } else {
-                  print("Transaction Category Value is null or does not exist.");
-                }
-              } else {
-                print("Document does not exist.");
-              }
+              // DocumentReference docRef =
+              //     FirebaseFirestore.instance.collection("Categories").doc(globalUID);
+              //
+              // DocumentSnapshot docSnapshot = await docRef.get();
+              //
+              // if (docSnapshot.exists) {
+              //   transactionCategoryValue = docSnapshot['${transactionCategoryValue}'];
+              //   if (transactionCategoryValue != null) {
+              //     // Use the transactionCategoryValue here
+              //     print("Transaction Category Value: $transactionCategoryValue");
+              //   } else {
+              //     print("Transaction Category Value is null or does not exist.");
+              //   }
+              // } else {
+              //   print("Document does not exist.");
+              // }
 
               CollectionReference collRef =
                   FirebaseFirestore.instance.collection("Transaction");
