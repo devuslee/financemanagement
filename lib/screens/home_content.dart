@@ -124,7 +124,7 @@ class _HomeContentState extends State<HomeContent> {
                       final transactionAmount = transaction["transactionAmount"];
                       final transactionType = transaction["transactionType"];
                       final transactionDescription = transaction["transactionDescription"];
-                      String transactionCategory = "";
+                      IconData transactionCategory = Icons.category;
                       final transactionUserID = transaction["transactionUserID"];
                       final transactionTime = transaction["transactionTime"];
 
@@ -132,23 +132,42 @@ class _HomeContentState extends State<HomeContent> {
                           .fromMillisecondsSinceEpoch(transactionTime);
 
                       if (transaction["transactionCategory"] == "Food") {
-                        transactionCategory = "food.png";
+                        transactionCategory = Icons.fastfood;
                       } else
-                      if (transaction["transactionCategory"] == "Transport") {
-                        transactionCategory = "transport.png";
+                      if (transaction["transactionCategory"] == "Home") {
+                        transactionCategory = Icons.home;
+                      } else
+                      if (transaction["transactionCategory"] == "Person") {
+                        transactionCategory = Icons.person;
                       } else
                       if (transaction["transactionCategory"] == "Shopping") {
-                        transactionCategory = "shopping.png";
+                        transactionCategory = Icons.shopping_cart;
                       } else
-                      if (transaction["transactionCategory"] == "Others") {
-                        transactionCategory = "others.png";
+                      if (transaction["transactionCategory"] == "Car") {
+                        transactionCategory = Icons.car_rental;
+                      } else
+                      if (transaction["transactionCategory"] == "Health") {
+                        transactionCategory = Icons.health_and_safety;
+                      } else
+                      if (transaction["transactionCategory"] == "Education") {
+                        transactionCategory = Icons.book;
+                      } else
+                      if (transaction["transactionCategory"] == "Entertainment") {
+                        transactionCategory = Icons.movie;
+                      } else
+                      if (transaction["transactionCategory"] == "Baby") {
+                        transactionCategory = Icons.baby_changing_station;
+                      } else
+                      if (transaction["transactionCategory"] == "Social") {
+                        transactionCategory = Icons.event;
                       }
+
                       final transactionWidget = Row(
                         children: [
                           Text(transactionName),
                           Text(transactionAmount),
                           Text(transactionType),
-                          Text(transactionCategory),
+                          Text(transactionCategory.codePoint.toString()),
                           Text(transactionDescription),
                         ],
                       );
@@ -256,11 +275,14 @@ class _HomeContentState extends State<HomeContent> {
                                         leading: ClipRRect(
                                           borderRadius: BorderRadius.circular(
                                               8.0),
-                                          child: Image.asset(
-                                            "assets/images/${(((transactionWidget as Row)
-                                                .children[3] as Text).data ??
-                                                '')}",
-                                          ), //Change to icons later
+                                          child: Icon(
+                                            IconData(
+                                              int.parse(((transactionWidget as Row).children[3] as Text).data!),
+                                              fontFamily: 'MaterialIcons',
+                                            ),
+                                            size: 40,
+                                            color: Colors.black,
+                                          ),
                                         ),
                                         title: Text(
                                           (((transactionWidget as Row)

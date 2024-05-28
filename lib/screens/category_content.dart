@@ -15,7 +15,22 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:financemanagement/main.dart';
 
-final List<String> transactionCategoryLists = ["Loading..."];
+final List<List<String>> transactionCategoryLists = [["Loading...", "Loading"]];
+int count = 0;
+final Map<String, IconData> iconMapping = {
+  'Food': Icons.fastfood,
+  'Home': Icons.home,
+  'Person': Icons.person,
+  'Shopping': Icons.shopping_cart,
+  'Car': Icons.car_rental,
+  'Health': Icons.health_and_safety,
+  'Education': Icons.book,
+  'Entertainment': Icons.movie,
+  'Baby': Icons.baby_changing_station,
+  'Social': Icons.event,
+};
+
+String IconText = "";
 
 class CategoryContent extends StatefulWidget {
   const CategoryContent({super.key});
@@ -26,8 +41,8 @@ class CategoryContent extends StatefulWidget {
 
 class _CategoryContentState extends State<CategoryContent> {
 
-
-  String transactionCategoryValue = transactionCategoryLists.isNotEmpty ? transactionCategoryLists.first : '';
+  TextEditingController categoryNameController = TextEditingController();
+  String transactionCategoryValue = "Loading...";
 
   @override
   void initState() {
@@ -46,19 +61,21 @@ class _CategoryContentState extends State<CategoryContent> {
         Map<String, dynamic>? data = documentSnapshot.data();
 
         if (data != null) {
-          List<String> categories = [];
+          List<List<String>> categories = [];
           data.forEach((key, value) {
-            categories.add(value.toString());
+            categories.add([key.toString(), value.toString()]);
+            print(categories);
           });
 
-          categories.sort(); //make sure the categories always display in the same manner
+          categories.sort((a, b) => a[0].compareTo(b[0])); //make sure the categories always display in the same manner
 
 
           setState(() {
             transactionCategoryLists.clear();
             transactionCategoryLists.addAll(categories);
+            count = count + 1;
             if (transactionCategoryLists.isNotEmpty) {
-              transactionCategoryValue = transactionCategoryLists.first;
+              transactionCategoryValue = transactionCategoryLists[count].first;
             }
           });
         }
@@ -68,6 +85,8 @@ class _CategoryContentState extends State<CategoryContent> {
     } catch (e) {
       print("Failed to fetch categories: $e");
     }
+
+    count = 0;
   }
 
 
@@ -97,12 +116,14 @@ class _CategoryContentState extends State<CategoryContent> {
                           leading: ClipRRect(
                             borderRadius: BorderRadius.circular(
                                 8.0),
-                            child: Image.asset(
-                              "assets/images/shopping.png",
-                            ),
+                            child: Icon(
+                              iconMapping[transactionCategoryList[1]],
+                              size: 40,
+                              color: Colors.black,
+                            )
                           ),
                           title: Text(
-                            transactionCategoryList,
+                            transactionCategoryList[0],
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -179,6 +200,7 @@ class _CategoryContentState extends State<CategoryContent> {
                                             decoration: InputDecoration(
                                               hintText: 'Enter Category Name',
                                             ),
+                                            controller: categoryNameController,
                                           ),
                                           SizedBox(height: 20),
                                           Row(
@@ -192,6 +214,7 @@ class _CategoryContentState extends State<CategoryContent> {
                                                 onPressed: () {
                                                   setState(() {
                                                     selectedIcon = Icons.fastfood;
+                                                    IconText = "Food";
                                                   });
                                                 },
                                               ),
@@ -203,6 +226,7 @@ class _CategoryContentState extends State<CategoryContent> {
                                                 onPressed: () {
                                                   setState(() {
                                                     selectedIcon = Icons.shopping_cart;
+                                                    IconText = "Shopping";
                                                   });
                                                 },
                                               ),
@@ -214,30 +238,142 @@ class _CategoryContentState extends State<CategoryContent> {
                                                 onPressed: () {
                                                   setState(() {
                                                     selectedIcon = Icons.home;
+                                                    IconText = "Home";
                                                   });
                                                 },
                                               ),
                                               IconButton(
                                                 icon: Icon(
-                                                  Icons.local_hospital,
-                                                  color: selectedIcon == Icons.local_hospital ? Colors.blue : Colors.grey,
+                                                  Icons.person,
+                                                  color: selectedIcon == Icons.person ? Colors.blue : Colors.grey,
                                                 ),
                                                 onPressed: () {
                                                   setState(() {
-                                                    selectedIcon = Icons.local_hospital;
+                                                    selectedIcon = Icons.person;
+                                                    IconText = "Person";
+                                                  });
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.car_rental,
+                                                  color: selectedIcon == Icons.car_rental ? Colors.blue : Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedIcon = Icons.car_rental;
+                                                    IconText = "Car";
                                                   });
                                                 },
                                               ),
                                             ],
                                         ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.health_and_safety,
+                                                  color: selectedIcon == Icons.health_and_safety ? Colors.blue : Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedIcon = Icons.health_and_safety;
+                                                    IconText = "Health";
+                                                  });
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.book,
+                                                  color: selectedIcon == Icons.book ? Colors.blue : Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedIcon = Icons.book;
+                                                    IconText = "Education";
+                                                  });
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.movie,
+                                                  color: selectedIcon == Icons.movie ? Colors.blue : Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedIcon = Icons.movie;
+                                                    IconText = "Entertainment";
+                                                  });
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.baby_changing_station,
+                                                  color: selectedIcon == Icons.baby_changing_station ? Colors.blue : Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedIcon = Icons.baby_changing_station;
+                                                    IconText = "Baby";
+                                                  });
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.event,
+                                                  color: selectedIcon == Icons.event ? Colors.blue : Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedIcon = Icons.event;
+                                                    IconText = "Social";
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          ),
                                       ],
                                     ),
                                       actions: [
                                         ElevatedButton(
-                                          onPressed: () {
-                                            // Perform actions when the 'Add' button is pressed
-                                            // You can add category to Firestore here
-                                            Navigator.of(context).pop(); // Close the dialog
+                                          onPressed: () async {
+
+                                            try {
+
+                                              DocumentReference collRef = FirebaseFirestore.instance
+                                                  .collection("Categories")
+                                                  .doc(FirebaseAuth.instance.currentUser?.uid);
+
+                                              await collRef.update({
+                                                '${categoryNameController.text}': IconText,
+                                              });
+
+                                              // Close the dialog
+                                              Navigator.of(context).pop();
+                                              fetchCategories();
+                                            } catch (e) {
+                                              // Handle any errors
+                                              print("Failed to add category: $e");
+                                              // Optionally, show an alert dialog to inform the user of the error
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text("Error"),
+                                                    content: Text("Failed to add category: $e"),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                        child: Text("OK"),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            }
                                           },
                                           child: Text('Add'),
                                         ),

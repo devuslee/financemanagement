@@ -59,9 +59,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     }).then((value) {
                       FirebaseFirestore.instance.collection("Categories").doc(
                           FirebaseAuth.instance.currentUser?.uid).set({
-                        "Food": "Food",
-                        "Transport": "Transport",
-                        "Shopping": "Shopping",
+                        'Food': "Food",
+                        'Home': 'Home',
+                        'Person': 'Person',
+                        'Shopping': 'Shopping',
+                        'Car': 'Car',
+                        'Health': 'Health',
+                        'Education': 'Education',
+                        'Entertainment': 'Entertainment',
+                        'Baby': 'Baby',
+                        'Social': 'Social',
                       }).then((value) {
                         Navigator.push(context,
                             MaterialPageRoute(

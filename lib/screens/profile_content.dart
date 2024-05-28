@@ -204,7 +204,7 @@ class _ProfileScreenState extends State<ProfileContent> {
                         ),
                         SimpleSettingsTile(
                             title: "Decimal places",
-                            subtitle: decimalvalue != 0 ? decimalvalue.toString() : "Loading...",
+                            subtitle: decimalvalue.toString(),
                             leading: Icon(Icons.format_list_numbered),
                             onTap: () {
                               showDialog(

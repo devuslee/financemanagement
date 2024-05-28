@@ -16,8 +16,7 @@ import 'package:flutter/widgets.dart';
 bool isButtonEnabled = true;
 int milidate = DateTime.now().millisecondsSinceEpoch;
 
-const List<String> transactionTypeList = ["Income", "Expense"];
-final List<String> transactionCategoryList = ["Loading..."];
+
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -34,15 +33,22 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   TextEditingController transactionDescription = TextEditingController();
   TextEditingController duedateController = TextEditingController();
 
+  final List<String> transactionTypeList = ["Income", "Expense"];
+  final List<List<String>> transactionCategoryLists = [];
+  int count = 0;
+
   int timestamp = DateTime.now().millisecondsSinceEpoch;
-  String transactionTypeValue = transactionTypeList.first;
-  String transactionCategoryValue = transactionCategoryList.isNotEmpty ? transactionCategoryList.first : '';
+  String transactionTypeValue = "Income";
+
+  String transactionCategoryValue = "Loading...";
 
   @override
   void initState() {
     super.initState();
     fetchCategories();
+
   }
+
 
   DateTime _currentDate = DateTime.now();
 
@@ -62,7 +68,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   Future<void> fetchCategories() async {
     try {
-      DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await FirebaseFirestore.instance
+      DocumentSnapshot<
+          Map<String, dynamic>> documentSnapshot = await FirebaseFirestore
+          .instance
           .collection('Categories')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
@@ -71,19 +79,22 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         Map<String, dynamic>? data = documentSnapshot.data();
 
         if (data != null) {
-          List<String> categories = [];
+          List<List<String>> categories = [];
           data.forEach((key, value) {
-            categories.add(value.toString());
+            categories.add([key.toString(), value.toString()]);
+            print(categories);
           });
 
-          categories.sort(); //make sure the categories always display in the same manner
+          categories.sort((a, b) =>
+              a[0].compareTo(
+                  b[0])); //make sure the categories always display in the same manner
 
 
           setState(() {
-            transactionCategoryList.clear();
-            transactionCategoryList.addAll(categories);
-            if (transactionCategoryList.isNotEmpty) {
-              transactionCategoryValue = transactionCategoryList.first;
+            transactionCategoryLists.clear();
+            transactionCategoryLists.addAll(categories);
+            if (transactionCategoryLists.isNotEmpty) {
+              transactionCategoryValue = transactionCategoryLists[0].first;
             }
           });
         }
@@ -207,6 +218,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                           ),
                           child: DropdownButton<String>(
                             padding: EdgeInsets.all(10),
+                            hint: Text("Loading..."),
                             value: transactionCategoryValue,
                             elevation: 16,
                             style: const TextStyle(color: Colors.grey),
@@ -215,10 +227,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                 transactionCategoryValue = newValue!;
                               });
                             },
-                            items: transactionCategoryList
-                                .map<DropdownMenuItem<String>>((String value) {
+                            items: transactionCategoryLists
+                                .map<DropdownMenuItem<String>>((List<String> value) {
                               return DropdownMenuItem<String>(
-                                  value: value, child: Text(value));
+                                  value: value.first,
+                                  child: Text(value.first));
                             }).toList(),
                           ),
                         ),
@@ -328,7 +341,24 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
+              DocumentReference docRef =
+                  FirebaseFirestore.instance.collection("Categories").doc(globalUID);
+
+              DocumentSnapshot docSnapshot = await docRef.get();
+
+              if (docSnapshot.exists) {
+                transactionCategoryValue = docSnapshot['${transactionCategoryValue}'];
+                if (transactionCategoryValue != null) {
+                  // Use the transactionCategoryValue here
+                  print("Transaction Category Value: $transactionCategoryValue");
+                } else {
+                  print("Transaction Category Value is null or does not exist.");
+                }
+              } else {
+                print("Document does not exist.");
+              }
+
               CollectionReference collRef =
                   FirebaseFirestore.instance.collection("Transaction");
               collRef.add({
