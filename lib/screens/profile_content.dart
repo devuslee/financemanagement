@@ -29,6 +29,7 @@ class _ProfileScreenState extends State<ProfileContent> {
   String currencyvalue = "Loading...";
   int decimalvalue = 0;
   String positionvalue = "Loading...";
+  int budgetvalue = 0;
 
   @override
   void initState() {
@@ -49,7 +50,8 @@ class _ProfileScreenState extends State<ProfileContent> {
         setState(() {
           currencyvalue = userData["userCurrency"] ?? "MYR";
           decimalvalue = userData["userDecimal"] ?? 0;
-          positionvalue = userData["userPosition"] ?? "Left";// Update currency value
+          positionvalue = userData["userPosition"] ?? "Left";
+          budgetvalue = userData["userBudget"] ?? 0;// Update currency value
         });
       }
     }
@@ -106,9 +108,28 @@ class _ProfileScreenState extends State<ProfileContent> {
     });
   }
 
+  void updateUserBudget(int budget) {
+    // Get the current user's document reference
+    DocumentReference userRef = FirebaseFirestore.instance.collection("Users").doc(FirebaseAuth.instance.currentUser!.uid);
+
+    // Update the currency field in the document
+    userRef.update({
+      "userBudget": budget,
+    }).then((value) {
+      print("Decimal place updated successfully");
+      setState(() {
+        budgetvalue = budget;
+      });
+    }).catchError((error) {
+      print("Failed to update currency: $error");
+    });
+  }
+
   int currentPageIndex = 2;
   @override
   Widget build(BuildContext context) {
+    TextEditingController userBudgetController = TextEditingController();
+
     return Scaffold(
         body: SafeArea(
             child: ListView(
@@ -123,6 +144,54 @@ class _ProfileScreenState extends State<ProfileContent> {
                             leading: Icon(Icons.bug_report),
                             onTap: () {
                               print("Country");
+                            }
+                        ),
+                        SimpleSettingsTile(
+                            title: "Set your budget",
+                            subtitle: budgetvalue.toString(),
+                            leading: Icon(Icons.savings),
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  String userBudget = "0";
+                                  return AlertDialog(
+                                    title: Text('Enter Budget'),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        TextField(
+                                          onChanged: (value) {
+                                            userBudget = value; // Update the category name when input changes
+                                          },
+                                          decoration: InputDecoration(
+                                            hintText: 'Set your budget',
+                                          ),
+                                          controller: userBudgetController,
+                                        ),
+                                        SizedBox(height: 20),
+                                      ],
+                                    ),
+                                    actions: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          int budget = int.parse(userBudget);
+                                          updateUserBudget(budget);
+                                          Navigator.of(context).pop(); // Close the dialog
+                                        },
+                                        child: Text('Done'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop(); // Close the dialog
+                                        },
+                                        child: Text('Cancel'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+
                             }
                         ),
                         SimpleSettingsTile(

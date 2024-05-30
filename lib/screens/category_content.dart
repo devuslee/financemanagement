@@ -90,6 +90,7 @@ class _CategoryContentState extends State<CategoryContent> {
   }
 
 
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -129,13 +130,105 @@ class _CategoryContentState extends State<CategoryContent> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          trailing: IconButton(
+                          trailing: PopupMenuButton<String>(
                             icon: Icon(
-                              Icons.arrow_forward_ios,
+                              Icons.more_horiz,
                               color: Colors.grey,
                             ),
-                            onPressed: () {
+                            onSelected: (String result) {
+                              if (result == 'delete') {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Delete Category'),
+                                      content: SingleChildScrollView(
+                                        child: Container(
+                                          width: MediaQuery.of(context).size.width * 0.4, // Adjust the width as needed
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Are you sure you want to delete this category? Deleting it will result in all transactions associated with this category being deleted as well.',
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      actions: [
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            try {
+                                              var currentUser = FirebaseAuth.instance.currentUser!.uid;
+
+                                              // References to the Firestore collections
+                                              DocumentReference categoryDocRef = FirebaseFirestore.instance
+                                                  .collection("Categories")
+                                                  .doc(currentUser);
+
+                                              Query<Map<String, dynamic>> transactionQuery = FirebaseFirestore.instance
+                                                  .collection("Transaction")
+                                                  .where('transactionCategory', isEqualTo: transactionCategoryList[0])
+                                                  .where('transactionUserID', isEqualTo: currentUser);
+
+                                              // Delete the category from the Categories collection
+                                              await categoryDocRef.update({
+                                                transactionCategoryList[0]: FieldValue.delete(),
+                                              });
+
+                                              // Fetch and delete all transactions associated with the category
+                                              QuerySnapshot<Map<String, dynamic>> transactionSnapshot = await transactionQuery.get();
+                                              for (var doc in transactionSnapshot.docs) {
+                                                await doc.reference.delete();
+                                              }
+
+                                              // Close the dialog and refresh the categories
+                                              Navigator.of(context).pop();
+                                              fetchCategories();
+                                            } catch (e) {
+                                              // Handle any errors
+                                              print("Failed to delete category: $e");
+                                              // Optionally, show an alert dialog to inform the user of the error
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text("Error"),
+                                                    content: Text("Failed to delete category: $e"),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                        child: Text("OK"),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            }
+                                          },
+                                          child: Text('Delete', style: TextStyle(color: Colors.red)),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop(); // Close the dialog
+                                          },
+                                          child: Text('Cancel'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
                             },
+                            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                              const PopupMenuItem<String>(
+                                value: 'delete',
+                                child: Text('Delete'),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -338,7 +431,6 @@ class _CategoryContentState extends State<CategoryContent> {
                                       actions: [
                                         ElevatedButton(
                                           onPressed: () async {
-
                                             try {
 
                                               DocumentReference collRef = FirebaseFirestore.instance
@@ -423,7 +515,45 @@ class _CategoryContentState extends State<CategoryContent> {
             ),
           ),
         ],
-      );
+    );
   }
+}
+
+Future<IconData> updateCategoryIcon(String categoryName) async {
+  IconData tempIconName = Icons.category;
+
+  DocumentSnapshot<Map<String, dynamic>> categoryDoc =
+  await FirebaseFirestore.instance
+      .collection("Categories")
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .get();
+
+  if (categoryDoc.exists) {
+    String iconName = categoryDoc[categoryName];
+
+    if (iconName == "Food") {
+      tempIconName = Icons.fastfood;
+    } else if (iconName == "Home") {
+      tempIconName = Icons.home;
+    } else if (iconName == "Person") {
+      tempIconName = Icons.person;
+    } else if (iconName == "Shopping") {
+      tempIconName = Icons.shopping_cart;
+    } else if (iconName == "Car") {
+      tempIconName = Icons.car_rental;
+    } else if (iconName == "Health") {
+      tempIconName = Icons.health_and_safety;
+    } else if (iconName == "Education") {
+      tempIconName = Icons.book;
+    } else if (iconName == "Entertainment") {
+      tempIconName = Icons.movie;
+    } else if (iconName == "Baby") {
+      tempIconName = Icons.baby_changing_station;
+    } else if (iconName == "Social") {
+      tempIconName = Icons.event;
+    }
+  }
+
+  return tempIconName;
 }
 

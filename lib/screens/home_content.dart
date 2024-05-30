@@ -15,6 +15,8 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:financemanagement/main.dart';
 
+int userBudget = 0;
+bool budgetSurpasses = false;
 
 class HomeContent extends StatefulWidget {
   @override
@@ -101,9 +103,11 @@ class _HomeContentState extends State<HomeContent> {
                           builder: (context, categoriesSnapshot) {
                   List<Row> transactionWidgets = [];
                   int totalIncome = 0;
+                  int totalMonthExpense = 0;
+                  int totalMonthIncome = 0;
                   int totalExpense = 0;
                   String userCurrency = "";
-                  int userBudget = 0;
+
                   int userDecimal = 0;
                   String userPosition = "";
                   String userCategory = "";
@@ -113,6 +117,7 @@ class _HomeContentState extends State<HomeContent> {
                     final tempuserBudget = userSnapshot.data?.get("userBudget");
                     final tempuserDecimal = userSnapshot.data?.get("userDecimal");
                     final tempuserPosition = userSnapshot.data?.get("userPosition");
+
 
                     userCurrency = tempuserCurrency;
                     userBudget = tempuserBudget;
@@ -142,8 +147,6 @@ class _HomeContentState extends State<HomeContent> {
 
                         userCategory = tempcategories;
                       }
-
-                      print(userCategory);
 
                       if (userCategory == "Food") {
                         transactionCategory = Icons.fastfood;
@@ -197,6 +200,23 @@ class _HomeContentState extends State<HomeContent> {
                           totalExpense += int.parse(transactionAmount);
                         }
                       }
+
+                      if (transactionUserID ==
+                          FirebaseAuth.instance.currentUser!.uid &&
+                          transactionDateTime.year == _currentDate.year &&
+                          transactionDateTime.month == _currentDate.month) {
+                        if (transactionType == "Income") {
+                          totalMonthIncome += int.parse(transactionAmount);
+                        } else {
+                          totalMonthExpense += int.parse(transactionAmount);
+                        }
+                      }
+
+                      if (totalMonthExpense > userBudget) {
+                        budgetSurpasses = true;
+                      } else {
+                        budgetSurpasses = false;
+                      }
                     }
                   }
                   return Expanded(
@@ -204,64 +224,89 @@ class _HomeContentState extends State<HomeContent> {
                       slivers: [
                         SliverToBoxAdapter(
                           child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 20),
+                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Total Expenses: ",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.black,
-                                      ),
+                                Expanded(
+                                  child: Text(
+                                    "Expenses",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
                                     ),
-                                    Text(
-                                      formatCurrency(totalExpense, userCurrency ?? "MYR", userPosition ?? "left", userDecimal ?? 2),
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.red,
-                                      ),
+                                  ),
+                                ),
+                                SizedBox(width: 20),
+                                Expanded(
+                                  child: Text(
+                                    "Income",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
                                     ),
-                                    SizedBox(width: 20),
-                                    Text(
-                                      "Total Income: ",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.black,
-                                      ),
+                                  ),
+                                ),
+                                SizedBox(width: 20),
+                                Expanded(
+                                  child: Text(
+                                    "Balance",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
                                     ),
-                                    Text(
-                                      formatCurrency(totalIncome, userCurrency ?? "MYR", userPosition ?? "left", userDecimal ?? 2),
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.green,
-                                      ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SliverToBoxAdapter(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    formatCurrency(totalExpense, userCurrency ?? "MYR", userPosition ?? "left", userDecimal ?? 2),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.red,
                                     ),
-                                    SizedBox(width: 20),
-                                    Text(
-                                      "Total Balance: ",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.black,
-                                      ),
+                                  ),
+                                ),
+                                SizedBox(width: 20),
+                                Expanded(
+                                  child: Text(
+                                    formatCurrency(totalIncome, userCurrency ?? "MYR", userPosition ?? "left", userDecimal ?? 2),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.green,
                                     ),
-                                    Text(
-                                      formatCurrency(totalIncome - totalExpense, userCurrency ?? "MYR", userPosition ?? "left", userDecimal ?? 2),
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: totalIncome - totalExpense > 0
-                                            ? Colors.green
-                                            : totalIncome - totalExpense < 0
-                                            ? Colors.red
-                                            : Colors.grey,
-                                      ),
+                                  ),
+                                ),
+                                SizedBox(width: 20),
+                                Expanded(
+                                  child: Text(
+                                    formatCurrency(totalIncome - totalExpense, userCurrency ?? "MYR", userPosition ?? "left", userDecimal ?? 2),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: totalIncome - totalExpense > 0
+                                          ? Colors.green
+                                          : totalIncome - totalExpense < 0
+                                          ? Colors.red
+                                          : Colors.grey,
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -345,7 +390,7 @@ class _HomeContentState extends State<HomeContent> {
                                 }
 
                                 return Column(
-                                  //if tiles empty return something else else
+                                  //if tiles empty show an empty transaction icon
                                   children: tiles.isEmpty
                                       ? [
 
