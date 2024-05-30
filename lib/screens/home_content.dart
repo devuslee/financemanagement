@@ -186,6 +186,7 @@ class _HomeContentState extends State<HomeContent> {
                           Text(transactionType),
                           Text(transactionCategory.codePoint.toString()),
                           Text(transactionDescription),
+                          Text(userCategory),
                         ],
                       );
                       if (transactionUserID ==
@@ -343,16 +344,154 @@ class _HomeContentState extends State<HomeContent> {
                                             color: Colors.black,
                                           ),
                                         ),
-                                        title: Text(
-                                          (((transactionWidget as Row)
-                                              .children[0] as Text).data ?? '')
-                                              .isEmpty
-                                              ? 'Null'
-                                              : ((transactionWidget as Row)
-                                              .children[0] as Text).data!,
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
+                                        title: GestureDetector(
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return StatefulBuilder(
+                                                    builder: (context, setState) {
+                                                    return AlertDialog(
+                                                        title: Text(
+                                                          "Transaction Details",
+                                                          style: TextStyle(
+                                                            fontSize: 20,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        content: Column(
+                                                          mainAxisSize: MainAxisSize.min,
+                                                          children: [
+                                                            Text(
+                                                              "Name: ${((transactionWidget as Row).children[0] as Text).data ?? 'Null'}",
+                                                              style: TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                                                                Text(
+                                                                  "Amount: ",
+                                                                  style: TextStyle(
+                                                                    fontSize: 16,
+                                                                    fontWeight: FontWeight.bold,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  "${formatCurrency(
+                                                                    int.tryParse(((transactionWidget as Row).children[1] as Text).data ?? '') ?? 0,
+                                                                    userCurrency ?? "MYR",
+                                                                    userPosition ?? "left",
+                                                                    userDecimal ?? 2,
+                                                                  )}",
+                                                                  style: TextStyle(
+                                                                    fontSize: 16,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    color: ((transactionWidget as Row).children[2] as Text).data == 'Income'
+                                                                        ? Colors.green
+                                                                        : Colors.red,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Text(
+                                                              "Type: ${((transactionWidget as Row).children[2] as Text).data ?? 'Null'}",
+                                                              style: TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              "Category: ${((transactionWidget as Row).children[5] as Text).data ?? 'Null'}",
+                                                              style: TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              "Description: ${((transactionWidget as Row).children[4] as Text).data ?? 'Null'}",
+                                                              style: TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        actions: [
+                                                          ElevatedButton(
+                                                            onPressed: () async {
+                                                              try {
+                                                                var currentUser = FirebaseAuth.instance.currentUser!.uid;
+                                                                
+                                                                Query<Map<String, dynamic>> transactionQuery = FirebaseFirestore.instance
+                                                                    .collection("Transaction")
+                                                                    .where('transactionCategory', isEqualTo: ((transactionWidget as Row).children[5] as Text).data)
+                                                                    .where('transactionName', isEqualTo: ((transactionWidget as Row).children[0] as Text).data)
+                                                                    .where('transactionAmount', isEqualTo: ((transactionWidget as Row).children[1] as Text).data)
+                                                                    .where('transactionType', isEqualTo: ((transactionWidget as Row).children[2] as Text).data)
+                                                                    .where('transactionDescription', isEqualTo: ((transactionWidget as Row).children[4] as Text).data)
+                                                                    .where('transactionUserID', isEqualTo: currentUser);
+
+                                                                // Fetch and delete all transactions associated with the category
+                                                                QuerySnapshot<Map<String, dynamic>> transactionSnapshot = await transactionQuery.get();
+                                                                for (var doc in transactionSnapshot.docs) {
+                                                                  await doc.reference.delete();
+                                                                }
+
+                                                                Navigator.of(context).pop();
+                                                              } catch (e) {
+                                                                // Handle any errors
+                                                                print("Failed to delete category: $e");
+                                                                // Optionally, show an alert dialog to inform the user of the error
+                                                                showDialog(
+                                                                  context: context,
+                                                                  builder: (BuildContext context) {
+                                                                    return AlertDialog(
+                                                                      title: Text("Error"),
+                                                                      content: Text("Failed to delete category: $e"),
+                                                                      actions: [
+                                                                        TextButton(
+                                                                          onPressed: () {
+                                                                            Navigator.of(context).pop();
+                                                                          },
+                                                                          child: Text("OK"),
+                                                                        ),
+                                                                      ],
+                                                                    );
+                                                                  },
+                                                                );
+                                                              }
+                                                            },
+                                                            child: Text('Delete', style: TextStyle(color: Colors.red)),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(context);
+                                                            },
+                                                            child: Text(
+                                                              "Close",
+                                                              style: TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    });
+                                              },
+                                            );
+                                          },
+                                          child: Text(
+                                            (((transactionWidget as Row).children[0] as Text).data ?? '').isEmpty
+                                                ? 'Null'
+                                                : ((transactionWidget as Row).children[0] as Text).data!,
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                         subtitle: Text(
