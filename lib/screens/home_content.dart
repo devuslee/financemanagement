@@ -139,6 +139,7 @@ class _HomeContentState extends State<HomeContent> {
                       final transactionUserID = transaction["transactionUserID"];
                       final transactionTime = transaction["transactionTime"];
 
+                      if (transactionUserID == FirebaseAuth.instance.currentUser!.uid) {
                       DateTime transactionDateTime = DateTime
                           .fromMillisecondsSinceEpoch(transactionTime);
 
@@ -179,44 +180,45 @@ class _HomeContentState extends State<HomeContent> {
                         transactionCategory = Icons.event;
                       }
 
-                      final transactionWidget = Row(
-                        children: [
-                          Text(transactionName),
-                          Text(transactionAmount),
-                          Text(transactionType),
-                          Text(transactionCategory.codePoint.toString()),
-                          Text(transactionDescription),
-                          Text(userCategory),
-                        ],
-                      );
-                      if (transactionUserID ==
-                          FirebaseAuth.instance.currentUser!.uid &&
-                          transactionDateTime.year == _currentDate.year &&
-                          transactionDateTime.month == _currentDate.month &&
-                          transactionDateTime.day == _currentDate.day) {
-                        transactionWidgets.add(transactionWidget);
-                        if (transactionType == "Income") {
-                          totalIncome += int.parse(transactionAmount);
-                        } else {
-                          totalExpense += int.parse(transactionAmount);
+                        final transactionWidget = Row(
+                          children: [
+                            Text(transactionName),
+                            Text(transactionAmount),
+                            Text(transactionType),
+                            Text(transactionCategory.codePoint.toString()),
+                            Text(transactionDescription),
+                            Text(userCategory),
+                          ],
+                        );
+                        if (transactionUserID ==
+                            FirebaseAuth.instance.currentUser!.uid &&
+                            transactionDateTime.year == _currentDate.year &&
+                            transactionDateTime.month == _currentDate.month &&
+                            transactionDateTime.day == _currentDate.day) {
+                          transactionWidgets.add(transactionWidget);
+                          if (transactionType == "Income") {
+                            totalIncome += int.parse(transactionAmount);
+                          } else {
+                            totalExpense += int.parse(transactionAmount);
+                          }
                         }
-                      }
 
-                      if (transactionUserID ==
-                          FirebaseAuth.instance.currentUser!.uid &&
-                          transactionDateTime.year == _currentDate.year &&
-                          transactionDateTime.month == _currentDate.month) {
-                        if (transactionType == "Income") {
-                          totalMonthIncome += int.parse(transactionAmount);
-                        } else {
-                          totalMonthExpense += int.parse(transactionAmount);
+                        if (transactionUserID ==
+                            FirebaseAuth.instance.currentUser!.uid &&
+                            transactionDateTime.year == _currentDate.year &&
+                            transactionDateTime.month == _currentDate.month) {
+                          if (transactionType == "Income") {
+                            totalMonthIncome += int.parse(transactionAmount);
+                          } else {
+                            totalMonthExpense += int.parse(transactionAmount);
+                          }
                         }
-                      }
 
-                      if (totalMonthExpense > userBudget) {
-                        budgetSurpasses = true;
-                      } else {
-                        budgetSurpasses = false;
+                        if (totalMonthExpense > userBudget) {
+                          budgetSurpasses = true;
+                        } else {
+                          budgetSurpasses = false;
+                        }
                       }
                     }
                   }

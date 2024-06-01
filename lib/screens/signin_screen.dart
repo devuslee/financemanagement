@@ -41,8 +41,8 @@ class _SignInScreenState extends State<SignInScreen> {
                 signInButton(context, "Sign In", Colors.grey.shade300, () {
                   //i want to test my app and auto login everytime
                   FirebaseAuth.instance.signInWithEmailAndPassword(
-                      email: "devuslee10@yahoo.com",
-                      password: "123123")
+                      email: emailController.text,
+                      password: passwordController.text)
                       .then((value) {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => HomeScreen()));
