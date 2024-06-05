@@ -1,18 +1,12 @@
-import 'package:financemanagement/screens/analytic_content.dart';
 import 'package:financemanagement/screens/home_screen.dart';
-import 'package:financemanagement/screens/profile_content.dart';
 import 'package:financemanagement/screens/signin_screen.dart';
-import 'package:financemanagement/screens/signup_screen.dart';
-import 'package:financemanagement/utils/color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:financemanagement/reusable_widget/reusable_widget.dart';
-import 'package:financemanagement/main.dart';
-import 'package:flutter/widgets.dart';
+import 'package:financemanagement/reusable_widget/reusable_email_text_field.dart'; // Import the email widget
+import 'package:financemanagement/reusable_widget/reusable_password_text_field.dart';
 
+import '../reusable_widget/reusable_widget.dart'; // Import the password widget
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -25,6 +19,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmpasswordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,11 +32,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 20, MediaQuery.of(context).size.height * 0.2, 20, 0),
             child: Column(
               children: <Widget>[
-                reusableTextField("Enter email", Icons.person_outline, false, emailController),
+                ReusableEmailTextField(
+                  labelText: "Enter email",
+                  icon: Icons.person_outline,
+                  controller: emailController,
+                ),
                 SizedBox(height: 30),
-                reusableTextField("Enter password", Icons.lock_outline, true, passwordController),
+                ReusablePasswordTextField(
+                  labelText: "Enter password",
+                  icon: Icons.lock_outline,
+                  controller: passwordController,
+                ),
                 SizedBox(height: 30),
-                reusableTextField("Enter confirm password", Icons.lock_outline, true, confirmpasswordController),
+                ReusablePasswordTextField(
+                  labelText: "Enter confirm password",
+                  icon: Icons.lock_outline,
+                  controller: confirmpasswordController,
+                ),
                 SizedBox(height: 30),
                 signInButton(context, "Sign Up", Colors.grey.shade300, () {
                   FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -109,8 +116,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           },
           child: const Text(
             "Sign In",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold
-            ),
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
         )],
     );

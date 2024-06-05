@@ -42,9 +42,9 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                 20, MediaQuery.of(context).size.height * 0.2, 20, 0),
             child: Column(
               children: <Widget>[
-                reusableTextField("Enter new password", Icons.person_outline, false, passwordController),
+                reusableTextFieldpass("Enter new password", Icons.person_outline, false, passwordController),
                 SizedBox(height: 30),
-                reusableTextField("Confirm new password", Icons.lock_outline, true, connfirmPasswordController),
+                reusableTextFieldpass("Confirm new password", Icons.lock_outline, true, connfirmPasswordController),
                 SizedBox(height: 30),
                 signInButton(context, "Update password", Colors.grey.shade300, () {
                   FirebaseAuth.instance.currentUser?.updatePassword(passwordController.text)

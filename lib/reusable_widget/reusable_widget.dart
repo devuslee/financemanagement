@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 
-TextField reusableTextField(String text, IconData icon, bool isPasswordType,
+TextField reusableTextFieldemail(String text, IconData icon, bool isPasswordType,
   TextEditingController controller) {
   return TextField(
     controller: controller,
@@ -21,6 +21,31 @@ TextField reusableTextField(String text, IconData icon, bool isPasswordType,
         borderRadius: BorderRadius.circular(30.0),
         borderSide: const BorderSide(width: 0, style: BorderStyle.none)),
       ),
+    keyboardType: TextInputType.text,
+  );
+
+}
+
+
+TextField reusableTextFieldpass(String text, IconData icon, bool isPasswordType,
+    TextEditingController controller) {
+  return TextField(
+    controller: controller,
+    obscureText: isPasswordType,
+    enableSuggestions: !isPasswordType,
+    cursorColor: Colors.black,
+    style: TextStyle(color: Colors.black.withOpacity(0.9)),
+    decoration: InputDecoration(
+      prefixIcon: Icon(icon, color: Colors.grey,),
+      labelText: text,
+      labelStyle: TextStyle(color: Colors.black.withOpacity(0.9)),
+      filled: true,
+      floatingLabelBehavior: FloatingLabelBehavior.never,
+      fillColor: Colors.grey.withOpacity(0.3),
+      border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: const BorderSide(width: 0, style: BorderStyle.none)),
+    ),
     keyboardType: isPasswordType
         ? TextInputType.visiblePassword
         : TextInputType.numberWithOptions(),

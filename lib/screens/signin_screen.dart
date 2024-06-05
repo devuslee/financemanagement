@@ -1,13 +1,12 @@
 import 'package:financemanagement/screens/home_screen.dart';
-import 'package:financemanagement/screens/signin_screen.dart';
 import 'package:financemanagement/screens/signup_screen.dart';
-import 'package:financemanagement/utils/color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:financemanagement/reusable_widget/reusable_widget.dart';
+import 'package:financemanagement/reusable_widget/reusable_email_text_field.dart'; // Import the email widget
+import 'package:financemanagement/reusable_widget/reusable_password_text_field.dart';
 
+import '../reusable_widget/reusable_widget.dart'; // Import the password widget
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -34,12 +33,20 @@ class _SignInScreenState extends State<SignInScreen> {
               children: <Widget>[
                 logoWidget("assets/images/logo.png"),
                 SizedBox(height: 30),
-                reusableTextField("Enter email", Icons.person_outline, false, emailController),
+                ReusableEmailTextField(
+                  labelText: "Enter email",
+                  icon: Icons.person_outline,
+                  controller: emailController,
+                ),
                 SizedBox(height: 30),
-                reusableTextField("Enter password", Icons.lock_outline, true, passwordController),
+                ReusablePasswordTextField(
+                  labelText: "Enter password",
+                  icon: Icons.lock_outline,
+                  controller: passwordController,
+                ),
                 SizedBox(height: 30),
                 signInButton(context, "Sign In", Colors.grey.shade300, () {
-                  //i want to test my app and auto login everytime
+                  // Auto login logic
                   FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: emailController.text,
                       password: passwordController.text)
@@ -49,8 +56,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   }).onError((error, stackTrace) {
                     print("Error: $error");
                   });
-                }
-                ),
+                }),
                 SizedBox(height: 20),
                 SignUpOption()
               ],
@@ -77,8 +83,7 @@ class _SignInScreenState extends State<SignInScreen> {
           },
           child: const Text(
             "Sign Up",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold
-            ),
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
         )],
     );

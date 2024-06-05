@@ -536,34 +536,36 @@ class _HomeContentState extends State<HomeContent> {
                                       ? [
 
                                     Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(150),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .center,
-                                          children: [
-                                            Image.asset(
-                                              height: 100,
-                                              width: 100,
-                                              "assets/images/empty_transaction.png", // Use any icon you prefer
-                                            ),
-                                            SizedBox(height: 20),
-                                            Container(
-                                              alignment: Alignment.center,
-                                              padding: EdgeInsets.all(20),
-                                              child: Text(
-                                                "No transactions found",
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                    child: Padding(
+                                    padding: const EdgeInsets.all(16.0), // Reduced padding for mobile responsiveness
+                                    child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                    Image.asset(
+                                    "assets/images/empty_transaction.png",
+                                    height: 100,
+                                    width: 100,
                                     ),
-                                  ]
+                                    SizedBox(height: 20),
+                                    Container(
+                                    alignment: Alignment.center,
+                                    padding: EdgeInsets.all(20),
+                                    child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                    "No transactions found",
+                                    style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    ),
+                                    ),
+                                    ),
+                                    ),
+                                    ],
+                                    ),
+                                    ),
+
+                                    )]
                                       : tiles,
                                 );
                               },
