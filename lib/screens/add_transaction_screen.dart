@@ -242,11 +242,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             return;
           }
 
-
-
-
-
-
           CollectionReference collRef =
           FirebaseFirestore.instance.collection("Transaction");
           collRef.add({
@@ -256,7 +251,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             "transactionCategory": transactionCategoryValue,
             "transactionDescription": transactionDescription.text,
             "transactionTime": milidate,
-            "transactionUserID": globalUID
+            "transactionUserID": FirebaseAuth.instance.currentUser?.uid,
           }).then((value) {
             transactionCategory.clear();
             Navigator.push(

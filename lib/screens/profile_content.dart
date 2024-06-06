@@ -138,14 +138,7 @@ class _ProfileScreenState extends State<ProfileContent> {
                   SettingsGroup(
                       title: "General",
                       children: <Widget>[
-                        SimpleSettingsTile(
-                            title: "Bug Report",
-                            subtitle: "Report a bug",
-                            leading: Icon(Icons.bug_report),
-                            onTap: () {
-                              print("Country");
-                            }
-                        ),
+
                         SimpleSettingsTile(
                             title: "Set your budget",
                             subtitle: budgetvalue.toString(),

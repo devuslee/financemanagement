@@ -103,26 +103,31 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
         .then((querySnapshot) {
       // Iterate through each transaction document
       for (var doc in querySnapshot.docs) {
-        String userId = doc['transactionUserID'];
-        DateTime transactionDateTime =
-            DateTime.fromMillisecondsSinceEpoch(doc['transactionTime']);
+        // Use safe access and provide default values
+        String? userId = doc['transactionUserID'] as String?;
+        int? transactionTimeMillis = doc['transactionTime'] as int?;
+        String? category = doc['transactionCategory'] as String?;
+        String? type = doc['transactionType'] as String?;
+        String? amountString = doc['transactionAmount'] as String?;
 
-        if (userId == currentUserId &&
-            transactionDateTime.year == _currentDate.year &&
-            transactionDateTime.month == _currentDate.month) {
-          String category = doc['transactionCategory'];
-          String type = doc['transactionType'];
-          int amount = int.parse(doc['transactionAmount']);
+        // Ensure all necessary fields are present
+        if (userId != null && transactionTimeMillis != null && category != null && type != null && amountString != null) {
+          DateTime transactionDateTime = DateTime.fromMillisecondsSinceEpoch(transactionTimeMillis);
+          if (userId == currentUserId &&
+              transactionDateTime.year == _currentDate.year &&
+              transactionDateTime.month == _currentDate.month) {
+            int amount = int.tryParse(amountString) ?? 0;
 
-          // Update category total in the map
-          if (type == "Expense") {
-            ExpenseCategoryTotals.update(category, (value) => value + amount,
-                ifAbsent: () => amount);
+            // Update category total in the map
+            if (type == "Expense") {
+              ExpenseCategoryTotals.update(category, (value) => value + amount, ifAbsent: () => amount);
+            }
+            if (type == "Income") {
+              IncomeCategoryTotals.update(category, (value) => value + amount, ifAbsent: () => amount);
+            }
           }
-          if (type == "Income") {
-            IncomeCategoryTotals.update(category, (value) => value + amount,
-                ifAbsent: () => amount);
-          }
+        } else {
+          print('Skipping document with missing data: ${doc.id}');
         }
       }
 
