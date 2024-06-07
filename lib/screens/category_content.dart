@@ -127,7 +127,7 @@ class _CategoryContentState extends State<CategoryContent> {
                             transactionCategoryList[0],
                             style: TextStyle(
                               fontSize: 20,
-                              fontWeight: FontWeight.bold,
+
                             ),
                           ),
                           trailing: PopupMenuButton<String>(

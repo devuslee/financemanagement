@@ -399,33 +399,28 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
                               child: (chartType == "Expense" && ExpenseChartData.isEmpty) ||
                                   (chartType == "Income" && IncomeChartData.isEmpty)
                                   ? Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(150),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          height: 100,
-                                          width: 100,
-                                          "assets/images/empty_transaction.png", // Use any icon you prefer
+                                child: Padding(
+                                  padding: const EdgeInsets.all(60),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        "assets/images/empty_transaction.png",
+                                        height: 100,
+                                        width: 100,
+                                      ),
+                                      SizedBox(height: 10), // Add some space between the image and the text
+                                      Text(
+                                        "No Charts found",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        SizedBox(height: 20),
-                                        Container(
-                                          alignment: Alignment.center,
-                                          padding: EdgeInsets.all(20),
-                                          child: Text(
-                                            "No Charts found",
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                )
+                                ),
+                              )
 
                                   : SfCircularChart(
                                 legend: Legend(

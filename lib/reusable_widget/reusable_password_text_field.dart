@@ -1,15 +1,16 @@
-// reusable_password_text_field.dart
 import 'package:flutter/material.dart';
 
 class ReusablePasswordTextField extends StatefulWidget {
   final String labelText;
   final IconData icon;
   final TextEditingController controller;
+  final String? Function(String?)? validator; // Add validator parameter
 
   ReusablePasswordTextField({
     required this.labelText,
     required this.icon,
     required this.controller,
+    this.validator, // Include validator parameter in constructor
   });
 
   @override
@@ -21,7 +22,7 @@ class _ReusablePasswordTextFieldState extends State<ReusablePasswordTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField( // Change to TextFormField
       controller: widget.controller,
       obscureText: !_isPasswordVisible,
       enableSuggestions: false,
@@ -51,6 +52,7 @@ class _ReusablePasswordTextFieldState extends State<ReusablePasswordTextField> {
         ),
       ),
       keyboardType: TextInputType.visiblePassword,
+      validator: widget.validator, // Assign validator parameter
     );
   }
 }

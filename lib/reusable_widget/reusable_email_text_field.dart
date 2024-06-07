@@ -1,20 +1,21 @@
-// reusable_email_text_field.dart
 import 'package:flutter/material.dart';
 
 class ReusableEmailTextField extends StatelessWidget {
   final String labelText;
   final IconData icon;
   final TextEditingController controller;
+  final String? Function(String?)? validator; // Add validator parameter
 
   ReusableEmailTextField({
     required this.labelText,
     required this.icon,
     required this.controller,
+    this.validator, // Include validator parameter in constructor
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField( // Change to TextFormField
       controller: controller,
       cursorColor: Colors.black,
       style: TextStyle(color: Colors.black.withOpacity(0.9)),
@@ -31,6 +32,7 @@ class ReusableEmailTextField extends StatelessWidget {
         ),
       ),
       keyboardType: TextInputType.emailAddress,
+      validator: validator, // Assign validator parameter
     );
   }
 }

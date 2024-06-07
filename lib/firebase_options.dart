@@ -5,14 +5,11 @@ import 'package:flutter/foundation.dart'
 
 import 'package:firebase_core/firebase_core.dart';
 
-
-
 Future<void> initializeFirebase() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 }
-
 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
@@ -65,4 +62,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'financemanagement-ead7b.appspot.com',
     iosBundleId: 'com.example.financemanagement',
   );
+
 }
