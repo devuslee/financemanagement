@@ -39,6 +39,8 @@ dependencies:
   flutter_settings_screens: ^0.3.4
   syncfusion_flutter_charts: ^25.2.5
   email_auth: ^2.0.0
+  animated_text_kit: ^4.2.1
+
 
 dev_dependencies:
   flutter_test:
