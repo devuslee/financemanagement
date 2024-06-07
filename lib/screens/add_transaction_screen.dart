@@ -32,6 +32,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   TextEditingController transactionDescription = TextEditingController();
   TextEditingController duedateController = TextEditingController();
 
+  final List<List<String>> IncometransactionCategoryLists = [["Loading...", "Loading"]];
+  final List<List<String>> ExpensetransactionCategoryLists = [["Loading...", "Loading"]];
   final List<String> transactionTypeList = ["Income", "Expense"];
   final List<List<String>> transactionCategoryLists = [];
   int count = 0;
@@ -65,29 +67,61 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   Future<void> fetchCategories() async {
     try {
-      DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await FirebaseFirestore
-          .instance
-          .collection('Categories')
+      DocumentSnapshot<Map<String, dynamic>> IncomedocumentSnapshot = await FirebaseFirestore.instance
+          .collection('IncomeCategories')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
 
-      if (documentSnapshot.exists) {
-        Map<String, dynamic>? data = documentSnapshot.data();
+      DocumentSnapshot<Map<String, dynamic>> ExpensedocumentSnapshot = await FirebaseFirestore.instance
+          .collection('ExpenseCategories')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      if (ExpensedocumentSnapshot.exists) {
+        Map<String, dynamic>? data = ExpensedocumentSnapshot.data();
 
         if (data != null) {
-          List<List<String>> categories = [];
+          List<List<String>> Expensecategories = [];
           data.forEach((key, value) {
-            categories.add([key.toString(), value.toString()]);
+            Expensecategories.add([key.toString(), value.toString()]);
+            print(Expensecategories);
           });
 
-          categories.sort((a, b) =>
-              a[0].compareTo(b[0])); //make sure the categories always display in the same manner
+          Expensecategories.sort((a, b) => a[0].compareTo(b[0])); //make sure the categories always display in the same manner
+
 
           setState(() {
-            transactionCategoryLists.clear();
-            transactionCategoryLists.addAll(categories);
-            if (transactionCategoryLists.isNotEmpty) {
-              transactionCategoryValue = transactionCategoryLists[0].first;
+            ExpensetransactionCategoryLists.clear();
+            ExpensetransactionCategoryLists.addAll(Expensecategories);
+            count = count + 1;
+            if (ExpensetransactionCategoryLists.isNotEmpty) {
+              transactionCategoryValue = ExpensetransactionCategoryLists[count].first;
+            }
+          });
+        }
+      } else {
+        print("Document does not exist");
+      }
+
+      if (IncomedocumentSnapshot.exists) {
+        Map<String, dynamic>? data = IncomedocumentSnapshot.data();
+
+        if (data != null) {
+          List<List<String>> Incomecategories = [];
+          data.forEach((key, value) {
+            Incomecategories.add([key.toString(), value.toString()]);
+            print(Incomecategories);
+          });
+
+          Incomecategories.sort((a, b) => a[0].compareTo(b[0])); //make sure the categories always display in the same manner
+
+
+          setState(() {
+            IncometransactionCategoryLists.clear();
+            IncometransactionCategoryLists.addAll(Incomecategories);
+            count = count + 1;
+            if (IncometransactionCategoryLists.isNotEmpty) {
+              transactionCategoryValue = IncometransactionCategoryLists[count].first;
             }
           });
         }
@@ -97,7 +131,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     } catch (e) {
       print("Failed to fetch categories: $e");
     }
+
+    count = 0;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -155,8 +192,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     transactionCategoryValue = newValue!;
                   });
                 },
-                items: transactionCategoryLists
-                    .map<DropdownMenuItem<String>>((value) {
+                items: transactionTypeValue == "Income"
+                    ? IncometransactionCategoryLists.map<DropdownMenuItem<String>>((value) {
+                  return DropdownMenuItem<String>(
+                    value: value.first,
+                    child: Text(value.first),
+                  );
+                }).toList()
+                    : ExpensetransactionCategoryLists.map<DropdownMenuItem<String>>((value) {
                   return DropdownMenuItem<String>(
                     value: value.first,
                     child: Text(value.first),
@@ -173,6 +216,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 onChanged: (newValue) {
                   setState(() {
                     transactionTypeValue = newValue!;
+                    transactionCategoryValue = transactionTypeValue == "Income"
+                        ? IncometransactionCategoryLists.first.first
+                        : ExpensetransactionCategoryLists.first.first;
                   });
                 },
                 items: transactionTypeList.map<DropdownMenuItem<String>>((value) {

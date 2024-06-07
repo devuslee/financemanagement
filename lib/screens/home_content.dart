@@ -112,10 +112,16 @@ class _HomeContentState extends State<HomeContent> {
                   builder: (context, userSnapshot) {
                     return StreamBuilder<DocumentSnapshot>(
                       stream: FirebaseFirestore.instance
-                          .collection("Categories")
+                          .collection("IncomeCategories")
                           .doc(FirebaseAuth.instance.currentUser!.uid)
                           .snapshots(),
-                      builder: (context, categoriesSnapshot) {
+                      builder: (context, IncomecategoriesSnapshot) {
+                        return StreamBuilder<DocumentSnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection("ExpenseCategories")
+                                .doc(FirebaseAuth.instance.currentUser!.uid)
+                                .snapshots(),
+                            builder: (context, ExpensecategoriesSnapshot) {
                         List<Row> transactionWidgets = [];
                         int totalIncome = 0;
                         int totalMonthExpense = 0;
@@ -169,11 +175,20 @@ class _HomeContentState extends State<HomeContent> {
                                   DateTime.fromMillisecondsSinceEpoch(
                                       transactionTime);
 
-                              if (categoriesSnapshot.hasData) {
-                                final tempcategories = categoriesSnapshot.data
-                                    ?.get(transaction["transactionCategory"]);
+                              if (transactionType == "Income") {
+                                if (IncomecategoriesSnapshot.hasData) {
+                                  String tempcategories = IncomecategoriesSnapshot.data
+                                      ?.get(transaction["transactionCategory"]);
 
-                                userCategory = tempcategories;
+                                  userCategory = tempcategories;
+                                }
+                              } else {
+                                if (ExpensecategoriesSnapshot.hasData) {
+                                  String tempcategories = ExpensecategoriesSnapshot.data
+                                      ?.get(transaction["transactionCategory"]);
+
+                                  userCategory = tempcategories;
+                                }
                               }
 
                               if (userCategory == "Food") {
@@ -197,6 +212,16 @@ class _HomeContentState extends State<HomeContent> {
                                     Icons.baby_changing_station;
                               } else if (userCategory == "Social") {
                                 transactionCategory = Icons.event;
+                              } else if (userCategory == "Salary") {
+                                transactionCategory = Icons.money;
+                              } else if (userCategory == "Business") {
+                                transactionCategory = Icons.business;
+                              } else if (userCategory == "Gift") {
+                                transactionCategory = Icons.card_giftcard;
+                              } else if (userCategory == "Investment") {
+                                transactionCategory = Icons.attach_money;
+                              } else if (userCategory == "Loan") {
+                                transactionCategory = Icons.money_off;
                               }
 
                               final transactionWidget = Row(
@@ -742,7 +767,11 @@ class _HomeContentState extends State<HomeContent> {
                           ),
                         );
                       },
+
                     );
+
+                  },
+                );
                   },
                 );
               },

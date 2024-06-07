@@ -15,7 +15,9 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:financemanagement/main.dart';
 
-final List<List<String>> transactionCategoryLists = [["Loading...", "Loading"]];
+final List<List<String>> IncometransactionCategoryLists = [["Loading...", "Loading"]];
+final List<List<String>> ExpensetransactionCategoryLists = [["Loading...", "Loading"]];
+
 int count = 0;
 final Map<String, IconData> iconMapping = {
   'Food': Icons.fastfood,
@@ -28,7 +30,13 @@ final Map<String, IconData> iconMapping = {
   'Entertainment': Icons.movie,
   'Baby': Icons.baby_changing_station,
   'Social': Icons.event,
+  'Business': Icons.business,
+  'Gift': Icons.card_giftcard,
+  'Investment': Icons.attach_money,
+  'Loan': Icons.money_off,
+  'Salary': Icons.money,
 };
+
 
 String IconText = "";
 
@@ -52,30 +60,61 @@ class _CategoryContentState extends State<CategoryContent> {
 
   Future<void> fetchCategories() async {
     try {
-      DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await FirebaseFirestore.instance
-          .collection('Categories')
+      DocumentSnapshot<Map<String, dynamic>> IncomedocumentSnapshot = await FirebaseFirestore.instance
+          .collection('IncomeCategories')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
 
-      if (documentSnapshot.exists) {
-        Map<String, dynamic>? data = documentSnapshot.data();
+      DocumentSnapshot<Map<String, dynamic>> ExpensedocumentSnapshot = await FirebaseFirestore.instance
+          .collection('ExpenseCategories')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      if (ExpensedocumentSnapshot.exists) {
+        Map<String, dynamic>? data = ExpensedocumentSnapshot.data();
 
         if (data != null) {
-          List<List<String>> categories = [];
+          List<List<String>> Expensecategories = [];
           data.forEach((key, value) {
-            categories.add([key.toString(), value.toString()]);
-            print(categories);
+            Expensecategories.add([key.toString(), value.toString()]);
+            print(Expensecategories);
           });
 
-          categories.sort((a, b) => a[0].compareTo(b[0])); //make sure the categories always display in the same manner
+          Expensecategories.sort((a, b) => a[0].compareTo(b[0])); //make sure the categories always display in the same manner
 
 
           setState(() {
-            transactionCategoryLists.clear();
-            transactionCategoryLists.addAll(categories);
+            ExpensetransactionCategoryLists.clear();
+            ExpensetransactionCategoryLists.addAll(Expensecategories);
             count = count + 1;
-            if (transactionCategoryLists.isNotEmpty) {
-              transactionCategoryValue = transactionCategoryLists[count].first;
+            if (ExpensetransactionCategoryLists.isNotEmpty) {
+              transactionCategoryValue = ExpensetransactionCategoryLists[count].first;
+            }
+          });
+        }
+      } else {
+        print("Document does not exist");
+      }
+
+      if (IncomedocumentSnapshot.exists) {
+        Map<String, dynamic>? data = IncomedocumentSnapshot.data();
+
+        if (data != null) {
+          List<List<String>> Incomecategories = [];
+          data.forEach((key, value) {
+            Incomecategories.add([key.toString(), value.toString()]);
+            print(Incomecategories);
+          });
+
+          Incomecategories.sort((a, b) => a[0].compareTo(b[0])); //make sure the categories always display in the same manner
+
+
+          setState(() {
+            IncometransactionCategoryLists.clear();
+            IncometransactionCategoryLists.addAll(Incomecategories);
+            count = count + 1;
+            if (IncometransactionCategoryLists.isNotEmpty) {
+              transactionCategoryValue = IncometransactionCategoryLists[count].first;
             }
           });
         }
@@ -93,6 +132,8 @@ class _CategoryContentState extends State<CategoryContent> {
 
   @override
   Widget build(BuildContext context) {
+    bool isExpense = true;
+
     return CustomScrollView(
         slivers: [
           SliverPadding(
@@ -100,10 +141,144 @@ class _CategoryContentState extends State<CategoryContent> {
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                  List<Widget> tiles = [];
+                  List<Widget> IncomeTiles = [];
+                  List<Widget> ExpenseTiles = [];
 
-                  for (var transactionCategoryList in transactionCategoryLists) {
-                    tiles.add(
+                  for (var transactionCategoryList in ExpensetransactionCategoryLists) {
+                    ExpenseTiles.add(
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.grey.withOpacity(0.3),
+                              width: 1.0,
+                            ),
+                          ),
+                        ),
+                        child: ListTile(
+                          leading: ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                  8.0),
+                              child: Icon(
+                                iconMapping[transactionCategoryList[1]],
+                                size: 40,
+                                color: Colors.black,
+                              )
+                          ),
+                          title: Text(
+                            transactionCategoryList[0],
+                            style: TextStyle(
+                              fontSize: 20,
+
+                            ),
+                          ),
+                          trailing: PopupMenuButton<String>(
+                            icon: Icon(
+                              Icons.more_horiz,
+                              color: Colors.grey,
+                            ),
+                            onSelected: (String result) {
+                              if (result == 'delete') {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Delete Category'),
+                                      content: SingleChildScrollView(
+                                        child: Container(
+                                          width: MediaQuery.of(context).size.width * 0.4, // Adjust the width as needed
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Are you sure you want to delete this category? Deleting it will result in all transactions associated with this category being deleted as well.',
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      actions: [
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            try {
+                                              var currentUser = FirebaseAuth.instance.currentUser!.uid;
+
+                                              // References to the Firestore collections
+                                              DocumentReference categoryDocRef = FirebaseFirestore.instance
+                                                  .collection("Categories")
+                                                  .doc(currentUser);
+
+                                              Query<Map<String, dynamic>> transactionQuery = FirebaseFirestore.instance
+                                                  .collection("Transaction")
+                                                  .where('transactionCategory', isEqualTo: transactionCategoryList[0])
+                                                  .where('transactionUserID', isEqualTo: currentUser);
+
+                                              // Delete the category from the Categories collection
+                                              await categoryDocRef.update({
+                                                transactionCategoryList[0]: FieldValue.delete(),
+                                              });
+
+                                              // Fetch and delete all transactions associated with the category
+                                              QuerySnapshot<Map<String, dynamic>> transactionSnapshot = await transactionQuery.get();
+                                              for (var doc in transactionSnapshot.docs) {
+                                                await doc.reference.delete();
+                                              }
+
+                                              // Close the dialog and refresh the categories
+                                              Navigator.of(context).pop();
+                                              fetchCategories();
+                                            } catch (e) {
+                                              // Handle any errors
+                                              print("Failed to delete category: $e");
+                                              // Optionally, show an alert dialog to inform the user of the error
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text("Error"),
+                                                    content: Text("Failed to delete category: $e"),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                        child: Text("OK"),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            }
+                                          },
+                                          child: Text('Delete', style: TextStyle(color: Colors.red)),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop(); // Close the dialog
+                                          },
+                                          child: Text('Cancel'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
+                            },
+                            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                              const PopupMenuItem<String>(
+                                value: 'delete',
+                                child: Text('Delete'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+
+                  for (var transactionCategoryList in IncometransactionCategoryLists) {
+                    IncomeTiles.add(
                       Container(
                         decoration: BoxDecoration(
                           border: Border(
@@ -237,7 +412,7 @@ class _CategoryContentState extends State<CategoryContent> {
 
                   return Column(
                     // If tiles is empty, return the "No transactions found" message, else return the tiles
-                    children: tiles.isEmpty
+                    children: ExpenseTiles.isEmpty
                         ? [
                       Center(
                         child: Padding(
@@ -268,8 +443,22 @@ class _CategoryContentState extends State<CategoryContent> {
                       ), // Add the "hello" text here
                     ]
                         : [
-
-                      ...tiles,
+                      Text(
+                        "Expense Categories",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      ...ExpenseTiles,
+                      Text(
+                        "Income Categories",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      ...IncomeTiles,
                       Container(
                         padding: EdgeInsets.all(20),
                         child: ElevatedButton(
@@ -294,6 +483,32 @@ class _CategoryContentState extends State<CategoryContent> {
                                               hintText: 'Enter Category Name',
                                             ),
                                             controller: categoryNameController,
+                                          ),
+                                          SizedBox(height: 20),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Radio(
+                                                value: true,
+                                                groupValue: isExpense,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    isExpense = true;
+                                                  });
+                                                },
+                                              ),
+                                              Text('Expense'),
+                                              Radio(
+                                                value: false,
+                                                groupValue: isExpense,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    isExpense = false;
+                                                  });
+                                                },
+                                              ),
+                                              Text('Income'),
+                                            ],
                                           ),
                                           SizedBox(height: 20),
                                           Row(
@@ -426,45 +641,160 @@ class _CategoryContentState extends State<CategoryContent> {
                                               ),
                                             ],
                                           ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.business,
+                                                  color: selectedIcon == Icons.business ? Colors.blue : Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedIcon = Icons.business;
+                                                    IconText = "Business";
+                                                  });
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.card_giftcard,
+                                                  color: selectedIcon == Icons.card_giftcard ? Colors.blue : Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedIcon = Icons.card_giftcard;
+                                                    IconText = "Gift";
+                                                  });
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.attach_money,
+                                                  color: selectedIcon == Icons.attach_money ? Colors.blue : Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedIcon = Icons.attach_money;
+                                                    IconText = "Investment";
+                                                  });
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.money_off,
+                                                  color: selectedIcon == Icons.money_off ? Colors.blue : Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedIcon = Icons.money_off;
+                                                    IconText = "Loan";
+                                                  });
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.money,
+                                                  color: selectedIcon == Icons.money ? Colors.blue : Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedIcon = Icons.money;
+                                                    IconText = "Salary";
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          ),
                                       ],
                                     ),
                                       actions: [
                                         ElevatedButton(
                                           onPressed: () async {
-                                            try {
+                                            if (isExpense == true) {
+                                              try {
+                                                DocumentReference collRef = FirebaseFirestore
+                                                    .instance
+                                                    .collection("ExpenseCategories")
+                                                    .doc(FirebaseAuth.instance
+                                                    .currentUser?.uid);
 
-                                              DocumentReference collRef = FirebaseFirestore.instance
-                                                  .collection("Categories")
-                                                  .doc(FirebaseAuth.instance.currentUser?.uid);
+                                                await collRef.update({
+                                                  '${categoryNameController
+                                                      .text}': IconText,
+                                                });
 
-                                              await collRef.update({
-                                                '${categoryNameController.text}': IconText,
-                                              });
+                                                // Close the dialog
+                                                Navigator.of(context).pop();
+                                                fetchCategories();
+                                              } catch (e) {
+                                                // Handle any errors
+                                                print(
+                                                    "Failed to add category: $e");
+                                                // Optionally, show an alert dialog to inform the user of the error
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (
+                                                      BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: Text("Error"),
+                                                      content: Text(
+                                                          "Failed to add category: $e"),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                context).pop();
+                                                          },
+                                                          child: Text("OK"),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              }
+                                            } else {
+                                              try {
+                                                DocumentReference collRef = FirebaseFirestore
+                                                    .instance
+                                                    .collection("IncomeCategories")
+                                                    .doc(FirebaseAuth.instance
+                                                    .currentUser?.uid);
 
-                                              // Close the dialog
-                                              Navigator.of(context).pop();
-                                              fetchCategories();
-                                            } catch (e) {
-                                              // Handle any errors
-                                              print("Failed to add category: $e");
-                                              // Optionally, show an alert dialog to inform the user of the error
-                                              showDialog(
-                                                context: context,
-                                                builder: (BuildContext context) {
-                                                  return AlertDialog(
-                                                    title: Text("Error"),
-                                                    content: Text("Failed to add category: $e"),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context).pop();
-                                                        },
-                                                        child: Text("OK"),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
+                                                await collRef.update({
+                                                  '${categoryNameController
+                                                      .text}': IconText,
+                                                });
+
+                                                // Close the dialog
+                                                Navigator.of(context).pop();
+                                                fetchCategories();
+                                              } catch (e) {
+                                                // Handle any errors
+                                                print(
+                                                    "Failed to add category: $e");
+                                                // Optionally, show an alert dialog to inform the user of the error
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (
+                                                      BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: Text("Error"),
+                                                      content: Text(
+                                                          "Failed to add category: $e"),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                context).pop();
+                                                          },
+                                                          child: Text("OK"),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              }
                                             }
                                           },
                                           child: Text('Add'),

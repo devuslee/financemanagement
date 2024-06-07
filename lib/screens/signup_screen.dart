@@ -108,7 +108,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           "userPosition": "Left",
                         }).then((value) {
                           FirebaseFirestore.instance
-                              .collection("Categories")
+                              .collection("ExpenseCategories")
                               .doc(FirebaseAuth.instance.currentUser?.uid)
                               .set({
                             'Food': "Food",
@@ -122,12 +122,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             'Baby': 'Baby',
                             'Social': 'Social',
                           }).then((value) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HomeScreen(),
-                              ),
-                            );
+                            FirebaseFirestore.instance
+                                .collection("IncomeCategories")
+                                .doc(FirebaseAuth.instance.currentUser?.uid)
+                                .set({
+                              'Salary': 'Salary',
+                              'Business': 'Business',
+                              'Gift': 'Gift',
+                              'Investment': 'Investment',
+                              'Loan': 'Loan',
+                            }).then((value) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomeScreen(),
+                                ),
+                              );
+                            }).onError((error, stackTrace) {
+                              print("Error: $error");
+                              showErrorDialog(context, getErrorMessage(error));
+                            });
                           }).onError((error, stackTrace) {
                             print("Error: $error");
                             showErrorDialog(context, getErrorMessage(error));
