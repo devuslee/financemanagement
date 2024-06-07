@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:financemanagement/screens/signin_screen.dart';
+import 'package:financemanagement/screens/introduction.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
@@ -16,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Timer(Duration(seconds: 7), () { // Duration of the splash screen
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => SignInScreen()),
+        MaterialPageRoute(builder: (context) => IntroductionPage()),
       );
     });
   }

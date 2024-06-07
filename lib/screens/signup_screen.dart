@@ -186,8 +186,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         ),
       ),
-    ],
-    )
+          Positioned(
+          top: 30, // Adjust the position as needed
+    left: 10, // Adjust the position as needed
+    child: IconButton(
+    icon: Icon(Icons.arrow_back),
+    onPressed: () {
+    Navigator.pop(context);
+    },
+    ),
+    ),
+        ]
+    ),
     );
   }
 
