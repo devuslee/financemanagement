@@ -16,7 +16,6 @@ import 'package:flutter/widgets.dart';
 bool isButtonEnabled = true;
 int milidate = DateTime.now().millisecondsSinceEpoch;
 
-
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({Key? key}) : super(key: key);
 
@@ -89,7 +88,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
           Expensecategories.sort((a, b) => a[0].compareTo(b[0])); //make sure the categories always display in the same manner
 
-
           setState(() {
             ExpensetransactionCategoryLists.clear();
             ExpensetransactionCategoryLists.addAll(Expensecategories);
@@ -115,7 +113,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
           Incomecategories.sort((a, b) => a[0].compareTo(b[0])); //make sure the categories always display in the same manner
 
-
           setState(() {
             IncometransactionCategoryLists.clear();
             IncometransactionCategoryLists.addAll(Incomecategories);
@@ -135,134 +132,148 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     count = 0;
   }
 
-
   @override
   Widget build(BuildContext context) {
     String formattedDate = formatDate(_currentDate);
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Add Transaction"),
-        backgroundColor: appbar,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Add Transaction",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 20),
-              reusableTextField2(
-                "Enter Transaction Name",
-                Icons.person_outline,
-                false,
-                transactionName,
-              ),
-              SizedBox(height: 20),
-              reusablePasswordField(
-                "Enter Transaction Amount",
-                Icons.attach_money,
-                false,
-                transactionAmount,
-              ),
-              SizedBox(height: 20),
-              reusableTextField2(
-                "Enter Transaction Description",
-                Icons.description,
-                false,
-                transactionDescription,
-              ),
-              SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: "Transaction Category",
-                  border: OutlineInputBorder(),
-                ),
-                value: transactionCategoryValue,
-                onChanged: (newValue) {
-                  setState(() {
-                    transactionCategoryValue = newValue!;
-                  });
-                },
-                items: transactionTypeValue == "Income"
-                    ? IncometransactionCategoryLists.map<DropdownMenuItem<String>>((value) {
-                  return DropdownMenuItem<String>(
-                    value: value.first,
-                    child: Text(value.first),
-                  );
-                }).toList()
-                    : ExpensetransactionCategoryLists.map<DropdownMenuItem<String>>((value) {
-                  return DropdownMenuItem<String>(
-                    value: value.first,
-                    child: Text(value.first),
-                  );
-                }).toList(),
-              ),
-              SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: "Transaction Type",
-                  border: OutlineInputBorder(),
-                ),
-                value: transactionTypeValue,
-                onChanged: (newValue) {
-                  setState(() {
-                    transactionTypeValue = newValue!;
-                    transactionCategoryValue = transactionTypeValue == "Income"
-                        ? IncometransactionCategoryLists.first.first
-                        : ExpensetransactionCategoryLists.first.first;
-                  });
-                },
-                items: transactionTypeList.map<DropdownMenuItem<String>>((value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              SizedBox(height: 20),
-              Row(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/moneymap.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 60.0), // Adjusted top padding
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Text(
-                      "Transaction Time: $formattedDate",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  SizedBox(height: 20), // Added space to move text lower
+                  Text(
+                    "Add Transaction",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  IconButton(
-                    onPressed: () async {
-                      DateTime? date = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2025),
-                      );
-                      if (date != null) {
-                        setState(() {
-                          _currentDate = date;
-                          milidate = date.millisecondsSinceEpoch;
-                          duedateController.text = formatDate(date);
-                        });
-                      }
+                  SizedBox(height: 20),
+                  reusableTextField2(
+                    "Enter Transaction Name",
+                    Icons.person_outline,
+                    false,
+                    transactionName,
+                  ),
+                  SizedBox(height: 20),
+                  reusablePasswordField(
+                    "Enter Transaction Amount",
+                    Icons.attach_money,
+                    false,
+                    transactionAmount,
+                  ),
+                  SizedBox(height: 20),
+                  reusableTextField2(
+                    "Enter Transaction Description",
+                    Icons.description,
+                    false,
+                    transactionDescription,
+                  ),
+                  SizedBox(height: 20),
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: "Transaction Category",
+                      border: OutlineInputBorder(),
+                    ),
+                    value: transactionCategoryValue,
+                    onChanged: (newValue) {
+                      setState(() {
+                        transactionCategoryValue = newValue!;
+                      });
                     },
-                    icon: Icon(Icons.calendar_today),
+                    items: transactionTypeValue == "Income"
+                        ? IncometransactionCategoryLists.map<DropdownMenuItem<String>>((value) {
+                      return DropdownMenuItem<String>(
+                        value: value.first,
+                        child: Text(value.first),
+                      );
+                    }).toList()
+                        : ExpensetransactionCategoryLists.map<DropdownMenuItem<String>>((value) {
+                      return DropdownMenuItem<String>(
+                        value: value.first,
+                        child: Text(value.first),
+                      );
+                    }).toList(),
+                  ),
+                  SizedBox(height: 20),
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: "Transaction Type",
+                      border: OutlineInputBorder(),
+                    ),
+                    value: transactionTypeValue,
+                    onChanged: (newValue) {
+                      setState(() {
+                        transactionTypeValue = newValue!;
+                        transactionCategoryValue = transactionTypeValue == "Income"
+                            ? IncometransactionCategoryLists.first.first
+                            : ExpensetransactionCategoryLists.first.first;
+                      });
+                    },
+                    items: transactionTypeList.map<DropdownMenuItem<String>>((value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Transaction Time: ",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        formattedDate,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          DateTime? date = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2020),
+                            lastDate: DateTime(2025),
+                          );
+                          if (date != null) {
+                            setState(() {
+                              _currentDate = date;
+                              milidate = date.millisecondsSinceEpoch;
+                              duedateController.text = formatDate(date);
+                            });
+                          }
+                        },
+                        icon: Icon(Icons.calendar_today),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
@@ -314,7 +325,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           });
         },
         child: const Icon(Icons.add),
-        backgroundColor: Colors.blue,
+
       ),
     );
   }

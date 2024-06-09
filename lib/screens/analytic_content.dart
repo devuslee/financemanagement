@@ -193,8 +193,17 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
     String formattedDate = formatDate(_currentDate);
 
     return Scaffold(
-        body: Padding(
-      padding: const EdgeInsets.all(8.0),
+      body: Stack(
+        children: [
+      // Background image
+      Positioned.fill(
+      child: Image.asset(
+        'assets/images/moneymap.png',
+        fit: BoxFit.cover,
+      ),
+    ),
+        Padding(
+      padding: const EdgeInsets.all(40.0),
       child: Column(
         children: [
           Row(
@@ -606,7 +615,10 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
           )
         ],
       ),
-    ));
+    ),
+    ],
+    ),
+    );
   }
 }
 

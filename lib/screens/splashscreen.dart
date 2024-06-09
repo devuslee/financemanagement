@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
           // Background image
           Positioned.fill(
             child: Image.asset(
-              'assets/images/moneymap.jpg',
+              'assets/images/moneymap.png',
               fit: BoxFit.cover,
             ),
           ),

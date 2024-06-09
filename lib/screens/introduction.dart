@@ -9,7 +9,7 @@ class IntroductionPage extends StatelessWidget {
         fit: StackFit.expand,
         children: <Widget>[
           Image.asset(
-            'assets/images/moneymap.jpg',
+            'assets/images/moneymap.png',
             fit: BoxFit.cover,
           ),
           Center(

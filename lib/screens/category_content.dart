@@ -137,7 +137,7 @@ class _CategoryContentState extends State<CategoryContent> {
     return CustomScrollView(
         slivers: [
           SliverPadding(
-            padding: EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(20.0),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                     (context, index) {
@@ -425,7 +425,7 @@ class _CategoryContentState extends State<CategoryContent> {
                                 width: 100,
                                 "assets/images/empty_transaction.png", // Use any icon you prefer
                               ),
-                              SizedBox(height: 20),
+                              SizedBox(height: 40),
                               Container(
                                 alignment: Alignment.center,
                                 padding: EdgeInsets.all(20),
@@ -443,6 +443,7 @@ class _CategoryContentState extends State<CategoryContent> {
                       ), // Add the "hello" text here
                     ]
                         : [
+                      SizedBox(height:30),
                       Text(
                         "Expense Categories",
                         style: TextStyle(
@@ -451,6 +452,7 @@ class _CategoryContentState extends State<CategoryContent> {
                         ),
                       ),
                       ...ExpenseTiles,
+                      SizedBox(height:20),
                       Text(
                         "Income Categories",
                         style: TextStyle(

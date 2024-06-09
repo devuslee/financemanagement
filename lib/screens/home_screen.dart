@@ -1,24 +1,18 @@
+import 'package:flutter/material.dart';
 import 'package:financemanagement/screens/add_transaction_screen.dart';
 import 'package:financemanagement/screens/analytic_content.dart';
-import 'package:financemanagement/screens/home_screen.dart';
-import 'package:financemanagement/screens/profile_content.dart';
-import 'package:financemanagement/screens/signin_screen.dart';
-import 'package:financemanagement/screens/signup_screen.dart';
-import 'package:financemanagement/utils/color.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:financemanagement/reusable_widget/reusable_widget.dart';
-import 'package:intl/intl.dart';
-import 'package:financemanagement/main.dart';
 import 'package:financemanagement/screens/home_content.dart';
 import 'package:financemanagement/screens/category_content.dart';
+import 'package:financemanagement/screens/profile_content.dart';
+import 'package:financemanagement/utils/color.dart';
+import 'package:financemanagement/reusable_widget/reusable_widget.dart';
+import 'package:financemanagement/reusable_widget/custom_bottom_nav_bar.dart';
+
+import '../main.dart';
 
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -37,75 +31,42 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Home"),
-        backgroundColor: appbar,
-        automaticallyImplyLeading: false,
+      extendBody: true, // This allows the body to extend behind the bottom navigation bar
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background image
+          Image.asset(
+            'assets/images/moneymap.png',
+            fit: BoxFit.cover,
+          ),
+          // Page content
+          Positioned.fill(
+            child: Column(
+              children: [
+                if (currentPageIndex == 0)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                  ),
+                Expanded(
+                  child: _pages[currentPageIndex],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-      body: _pages[currentPageIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: currentPageIndex,
-        onDestinationSelected: (int index) {
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: currentPageIndex,
+        onTap: (index) {
           setState(() {
             currentPageIndex = index;
           });
         },
-        destinations: [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.analytics_outlined),
-            selectedIcon: Icon(Icons.analytics),
-            label: 'Analytics',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.category_outlined),
-            selectedIcon: Icon(Icons.category),
-            label: 'Category',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.account_circle_outlined),
-            selectedIcon: Icon(Icons.account_circle),
-            label: 'Profile',
-          ),
-        ],
       ),
-      floatingActionButton: currentPageIndex == 0 ? FloatingActionButton(
+      floatingActionButton: currentPageIndex == 0
+          ? FloatingActionButton(
         onPressed: () {
-          if (budgetSurpasses == true) {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text("Warning"),
-                  content: Text("You have surpassed your budget!"),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AddTransactionScreen(),
-                          ),
-                        );
-                      },
-                      child: Text("Continue"),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text("Cancel"),
-                    ),
-                  ],
-                );
-              },
-            );
-          } else
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -114,7 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
         child: Icon(Icons.add),
-      ) : null,
+      )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }

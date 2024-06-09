@@ -1,66 +1,157 @@
-import 'package:financemanagement/screens/add_transaction_screen.dart';
-import 'package:financemanagement/screens/analytic_content.dart';
-import 'package:financemanagement/screens/home_screen.dart';
-import 'package:financemanagement/screens/profile_content.dart';
-import 'package:financemanagement/screens/signin_screen.dart';
-import 'package:financemanagement/screens/signup_screen.dart';
-import 'package:financemanagement/utils/color.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:financemanagement/reusable_widget/reusable_widget.dart';
-import 'package:intl/intl.dart';
-import 'package:financemanagement/main.dart';
-import 'package:financemanagement/screens/home_content.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'home_screen.dart';
 
 class UpdatePasswordScreen extends StatefulWidget {
-  const UpdatePasswordScreen({super.key});
+  const UpdatePasswordScreen({Key? key}) : super(key: key);
 
   @override
   State<UpdatePasswordScreen> createState() => _UpdatePasswordScreenState();
 }
 
 class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController connfirmPasswordController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+  bool _showPassword = false;
+  String? _error;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Add Transaction"),
-        backgroundColor: appbar,
-      ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-                20, MediaQuery.of(context).size.height * 0.2, 20, 0),
-            child: Column(
-              children: <Widget>[
-                reusableTextFieldpass("Enter new password", Icons.person_outline, false, passwordController),
-                SizedBox(height: 30),
-                reusableTextFieldpass("Confirm new password", Icons.lock_outline, true, connfirmPasswordController),
-                SizedBox(height: 30),
-                signInButton(context, "Update password", Colors.grey.shade300, () {
-                  FirebaseAuth.instance.currentUser?.updatePassword(passwordController.text)
-                      .then((value) {
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()));
-                  }).onError((error, stackTrace) {
-                    print("Error: $error");
-                  });
-                }
+      body: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Image.asset(
+                    'assets/images/moneymap.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(height: 60), // Adjust this based on your design
+                        Padding(
+                          padding: const EdgeInsets.only(left: -0.0), // Adjust the left padding as needed
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.arrow_back, color: Colors.white),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                padding: EdgeInsets.only(left:0), // Remove default padding from IconButton
+                              ),
+                              SizedBox(width: 7), // Add space between the button and the text
+                              Text(
+                                "Change Password",
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        _buildPasswordField("Enter New Password", Icons.lock_outline, passwordController),
+                        SizedBox(height: 20),
+                        _buildPasswordField("Confirm New Password", Icons.lock_outline, confirmPasswordController),
+                        SizedBox(height: 20),
+                        if (_error != null)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16.0, top: 8.0),
+                            child: Text(
+                              _error!,
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _updatePassword,
+                            child: Text("Update Password"),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPasswordField(String labelText, IconData icon, TextEditingController controller) {
+    return TextFormField(
+      controller: controller,
+      obscureText: !_showPassword,
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon),
+        labelText: labelText,
+        suffixIcon: IconButton(
+          icon: Icon(_showPassword ? Icons.visibility : Icons.visibility_off),
+          onPressed: () {
+            setState(() {
+              _showPassword = !_showPassword;
+            });
+          },
         ),
       ),
     );
+  }
+
+  void _updatePassword() async {
+    setState(() {
+      _error = null;
+    });
+
+    if (passwordController.text.isEmpty) {
+      setState(() {
+        _error = "Please enter a password";
+      });
+      return;
+    } else if (!_isPasswordValid(passwordController.text)) {
+      setState(() {
+        _error = "Password must be at least 8 characters long and contain symbols, capital letters, and numbers";
+      });
+      return;
+    }
+
+    if (confirmPasswordController.text.isEmpty) {
+      setState(() {
+        _error = "Please confirm your password";
+      });
+      return;
+    } else if (passwordController.text != confirmPasswordController.text) {
+      setState(() {
+        _error = "Passwords do not match";
+      });
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.currentUser?.updatePassword(passwordController.text);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+    } catch (e) {
+      setState(() {
+        _error = "Failed to update password: ${e.toString()}";
+      });
+    }
+  }
+
+  bool _isPasswordValid(String password) {
+    final regex = RegExp(r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+]).{8,}$');
+    return regex.hasMatch(password);
   }
 }
