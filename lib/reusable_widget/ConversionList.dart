@@ -154,13 +154,9 @@ class _ConversionListState extends State<ConversionList> {
                   textController.text = '0';
                 }
                 setState(() {
-                  print('From: $From');
-                  print('To: $To');
                   getData();
 
                   inputAmount = textController.text;
-                  print('amount inputted is');
-                  print(inputAmount);
                   Provider.of<Data>(context, listen: false)
                       .enterAmount(inputAmount);
                   Provider.of<Data>(context, listen: false)

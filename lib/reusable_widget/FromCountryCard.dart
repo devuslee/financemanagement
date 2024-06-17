@@ -25,7 +25,7 @@ class FromCountryCard extends StatelessWidget {
           ),
           child: CircleAvatar(
             radius: 35,
-            backgroundImage: AssetImage('assets/flags/$image'),
+            backgroundImage: AssetImage('flags/$image'),
           ),
         ),
         SizedBox(
