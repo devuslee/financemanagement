@@ -6,6 +6,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:financemanagement/screens/currency_page.dart';
+import 'package:financemanagement/screens/signin_screen.dart';
+
 
 String? globalUID;
 
@@ -31,29 +36,21 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return ChangeNotifierProvider<Data>(
+      create: (context) => Data(),
+      child: MaterialApp(
+        theme: ThemeData(
+            primaryColor: Colors.blueAccent,
+            scaffoldBackgroundColor: Color(0xFF00142F),
+            textTheme: TextTheme(
+                bodyText2: TextStyle(
+                    color: Colors.black
+                )
+            )
+        ),
+        home: const SignInScreen(),
+        // home: const SplashScreen(),
       ),
-
-      home: const SplashScreen(),
     );
   }
 }
@@ -71,5 +68,43 @@ Future<void> getUserID() async {
     }
   } catch (e) {
     print("Error retrieving user ID: $e");
+  }
+}
+
+class Data extends ChangeNotifier{
+  String initialCur='AUD';
+  String finalCur='USD';
+  String updatedRate = "0";
+  String inputAmount = "0";
+  String? outputAmount;
+  String? initialCurDisplay;
+  String? finalCurDisplay;
+
+  void changeInitial(String newInitial){
+    initialCur=newInitial;
+    notifyListeners();
+  }
+  void changeFinal(String newFinal){
+    finalCur=newFinal;
+    notifyListeners();
+  }
+  void changeRate(String newRate){
+    updatedRate=newRate;
+    notifyListeners();
+  }
+
+  void enterAmount(String newInput){
+    inputAmount=newInput;
+    notifyListeners();
+  }
+  void updateInitialCurDisplay(String newInput){
+    initialCurDisplay=newInput;
+  }
+  void updateFinalCurDisplay(String newInput){
+    finalCurDisplay=newInput;
+  }
+  void calcConvertedAmount(String rate ){
+    outputAmount=(double.parse(inputAmount)*double.parse(updatedRate)).toStringAsFixed(2);
+    notifyListeners();
   }
 }

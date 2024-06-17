@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:financemanagement/screens/update_password_screen.dart';
+import 'package:financemanagement/screens/currency_page.dart';
 
 class ProfileContent extends StatefulWidget {
   const ProfileContent({Key? key}) : super(key: key);
@@ -314,6 +315,19 @@ class _ProfileScreenState extends State<ProfileContent> {
                           ),
                         );
                       },
+                    );
+                  },
+                ),
+              ),
+              Card(
+                child: ListTile(
+                  title: Text("Currency Converter"),
+                  subtitle: Text("Convert your currency"),
+                  leading: Icon(Icons.currency_exchange),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CurrencyPage()),
                     );
                   },
                 ),

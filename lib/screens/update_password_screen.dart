@@ -18,6 +18,9 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Change Password'),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -36,30 +39,6 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         SizedBox(height: 60), // Adjust this based on your design
-                        Padding(
-                          padding: const EdgeInsets.only(left: -0.0), // Adjust the left padding as needed
-                          child: Row(
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.arrow_back, color: Colors.white),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                padding: EdgeInsets.only(left:0), // Remove default padding from IconButton
-                              ),
-                              SizedBox(width: 7), // Add space between the button and the text
-                              Text(
-                                "Change Password",
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 20),
                         _buildPasswordField("Enter New Password", Icons.lock_outline, passwordController),
                         SizedBox(height: 20),
                         _buildPasswordField("Confirm New Password", Icons.lock_outline, confirmPasswordController),

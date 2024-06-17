@@ -4,6 +4,7 @@ import 'package:financemanagement/screens/home_screen.dart';
 import 'package:financemanagement/screens/profile_content.dart';
 import 'package:financemanagement/screens/signin_screen.dart';
 import 'package:financemanagement/screens/signup_screen.dart';
+import 'package:financemanagement/screens/update_transaction_screen.dart';
 import 'package:financemanagement/utils/color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -168,6 +169,8 @@ class _HomeContentState extends State<HomeContent> {
                                     transaction["transactionUserID"];
                                 final transactionTime =
                                     transaction["transactionTime"];
+                                final transactionID =
+                                    transaction["transactionID"];
 
                                 if (transactionUserID ==
                                     FirebaseAuth.instance.currentUser!.uid) {
@@ -238,6 +241,8 @@ class _HomeContentState extends State<HomeContent> {
                                           .toString()),
                                       Text(transactionDescription),
                                       Text(userCategory),
+                                      Text(transactionID),
+                                      Text(transactionTime.toString()),
                                     ],
                                   );
                                   if (transactionUserID ==
@@ -630,6 +635,33 @@ class _HomeContentState extends State<HomeContent> {
                                                                       style: TextStyle(
                                                                           color:
                                                                               Colors.red)),
+                                                                ),
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                                      return UpdateTransaction(
+                                                                        transactionID: ((transactionWidget as Row).children[6] as Text).data ?? '',
+                                                                        transactionName: ((transactionWidget as Row).children[0] as Text).data ?? '',
+                                                                        transactionAmount: ((transactionWidget as Row).children[1] as Text).data ?? '',
+                                                                        transactionType: ((transactionWidget as Row).children[2] as Text).data ?? '',
+                                                                        transactionCategory: ((transactionWidget as Row).children[5] as Text).data ?? '',
+                                                                        transactionDescription: ((transactionWidget as Row).children[4] as Text).data ?? '',
+                                                                        transactionTime: ((transactionWidget as Row).children[7] as Text).data ?? '',
+                                                                      );
+                                                                    }));
+                                                                  },
+                                                                  child: Text(
+                                                                    "Edit",
+                                                                    style:
+                                                                    TextStyle(
+                                                                      fontSize:
+                                                                      16,
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                    ),
+                                                                  ),
                                                                 ),
                                                                 TextButton(
                                                                   onPressed:

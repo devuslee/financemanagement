@@ -1,29 +1,37 @@
-import 'package:financemanagement/screens/analytic_content.dart';
-import 'package:financemanagement/screens/home_screen.dart';
-import 'package:financemanagement/screens/profile_content.dart';
-import 'package:financemanagement/screens/signin_screen.dart';
-import 'package:financemanagement/screens/signup_screen.dart';
-import 'package:financemanagement/utils/color.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'home_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:financemanagement/reusable_widget/reusable_widget.dart';
-import 'package:financemanagement/main.dart';
-import 'package:flutter/widgets.dart';
 
 bool isButtonEnabled = true;
 int milidate = DateTime.now().millisecondsSinceEpoch;
 
-class AddTransactionScreen extends StatefulWidget {
-  const AddTransactionScreen({Key? key}) : super(key: key);
+class UpdateTransaction extends StatefulWidget {
+  String transactionID;
+  String transactionName;
+  String transactionAmount;
+  String transactionType;
+  String transactionCategory;
+  String transactionDescription;
+  String transactionTime;
+
+  UpdateTransaction({
+    Key? key,
+    required this.transactionID,
+    required this.transactionName,
+    required this.transactionAmount,
+    required this.transactionType,
+    required this.transactionCategory,
+    required this.transactionDescription,
+    required this.transactionTime,
+  }) : super(key: key);
 
   @override
-  State<AddTransactionScreen> createState() => _AddTransactionScreenState();
+  State<UpdateTransaction> createState() => _UpdateTransactionState();
 }
 
-class _AddTransactionScreenState extends State<AddTransactionScreen> {
+class _UpdateTransactionState extends State<UpdateTransaction> {
   TextEditingController transactionName = TextEditingController();
   TextEditingController transactionAmount = TextEditingController();
   TextEditingController transactionType = TextEditingController();
@@ -31,26 +39,33 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   TextEditingController transactionDescription = TextEditingController();
   TextEditingController duedateController = TextEditingController();
 
-  final List<List<String>> IncometransactionCategoryLists = [["Loading...", "Loading"]];
-  final List<List<String>> ExpensetransactionCategoryLists = [["Loading...", "Loading"]];
+  List<List<String>> IncometransactionCategoryLists = [["Loading...", "Loading"]];
+  List<List<String>> ExpensetransactionCategoryLists = [["Loading...", "Loading"]];
   final List<String> transactionTypeList = ["Income", "Expense"];
-  final List<List<String>> transactionCategoryLists = [];
-  int count = 0;
+  bool isLoading = true; // Track the loading state
 
   int timestamp = DateTime.now().millisecondsSinceEpoch;
-  String transactionTypeValue = "Income";
-
   String transactionCategoryValue = "Loading...";
+  String transactionTypeValue = "Income"; // Default value, can be modified later
 
   @override
   void initState() {
     super.initState();
     fetchCategories();
+    transactionName.text = widget.transactionName;
+    transactionAmount.text = widget.transactionAmount;
+    transactionType.text = widget.transactionType;
+    transactionCategory.text = widget.transactionCategory;
+    transactionDescription.text = widget.transactionDescription;
+
+    // Set initial values
+    transactionCategoryValue = widget.transactionCategory;
+    transactionTypeValue = widget.transactionType;
   }
+  //i need to set _currentDate to the date of the transaction
 
-  DateTime _currentDate = DateTime.now();
 
-  // Function to format the date manually
+
   String formatDate(DateTime date) {
     const monthNames = [
       'January', 'February', 'March', 'April', 'May', 'June',
@@ -83,7 +98,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           List<List<String>> Expensecategories = [];
           data.forEach((key, value) {
             Expensecategories.add([key.toString(), value.toString()]);
-            print(Expensecategories);
           });
 
           Expensecategories.sort((a, b) => a[0].compareTo(b[0])); //make sure the categories always display in the same manner
@@ -91,10 +105,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           setState(() {
             ExpensetransactionCategoryLists.clear();
             ExpensetransactionCategoryLists.addAll(Expensecategories);
-            count = count + 1;
-            if (ExpensetransactionCategoryLists.isNotEmpty) {
-              transactionCategoryValue = ExpensetransactionCategoryLists[count].first;
-            }
           });
         }
       } else {
@@ -108,7 +118,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           List<List<String>> Incomecategories = [];
           data.forEach((key, value) {
             Incomecategories.add([key.toString(), value.toString()]);
-            print(Incomecategories);
           });
 
           Incomecategories.sort((a, b) => a[0].compareTo(b[0])); //make sure the categories always display in the same manner
@@ -116,30 +125,42 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           setState(() {
             IncometransactionCategoryLists.clear();
             IncometransactionCategoryLists.addAll(Incomecategories);
-            count = count + 1;
-            if (IncometransactionCategoryLists.isNotEmpty) {
-              transactionCategoryValue = IncometransactionCategoryLists[count].first;
-            }
           });
         }
       } else {
         print("Document does not exist");
       }
+
+      // Ensure the transactionCategoryValue is correctly set after fetching categories
+      setState(() {
+        if (transactionTypeValue == "Income") {
+          transactionCategoryValue = IncometransactionCategoryLists
+              .firstWhere((category) => category[0] == widget.transactionCategory, orElse: () => IncometransactionCategoryLists[0])
+              .first;
+        } else {
+          transactionCategoryValue = ExpensetransactionCategoryLists
+              .firstWhere((category) => category[0] == widget.transactionCategory, orElse: () => ExpensetransactionCategoryLists[0])
+              .first;
+        }
+        isLoading = false; // Set loading to false after categories are fetched
+      });
+
     } catch (e) {
       print("Failed to fetch categories: $e");
+      setState(() {
+        isLoading = false; // Set loading to false even if there is an error
+      });
     }
-
-    count = 0;
   }
 
   @override
   Widget build(BuildContext context) {
+    DateTime _currentDate = DateTime.fromMillisecondsSinceEpoch(int.parse(widget.transactionTime));
     String formattedDate = formatDate(_currentDate);
-    double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Transaction"),
+        title: Text("Update Transaction"),
       ),
       body: Stack(
         fit: StackFit.expand,
@@ -150,15 +171,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          SingleChildScrollView(
+          isLoading
+              ? Center(child: CircularProgressIndicator()) // Display loading indicator while fetching categories
+              : SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 60.0), // Adjusted top padding
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 60.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 20), // Added space to move text lower
+                  SizedBox(height: 20),
                   Text(
-                    "Add Transaction",
+                    "Update Transaction",
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -256,15 +279,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         onPressed: () async {
                           DateTime? date = await showDatePicker(
                             context: context,
-                            initialDate: DateTime.now(),
+                            initialDate: _currentDate,
                             firstDate: DateTime(2020),
                             lastDate: DateTime(2025),
                           );
                           if (date != null) {
                             setState(() {
                               _currentDate = date;
-                              milidate = date.millisecondsSinceEpoch;
-                              duedateController.text = formatDate(date);
                             });
                           }
                         },
@@ -302,17 +323,16 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             return;
           }
 
-          CollectionReference collRef =
-          FirebaseFirestore.instance.collection("Transaction");
-          collRef.doc(timestamp.toString()).set({
+          CollectionReference collRef = FirebaseFirestore.instance.collection("Transaction");
+          collRef.doc(widget.transactionID).update({
             "transactionName": transactionName.text,
             "transactionAmount": transactionAmount.text,
             "transactionType": transactionTypeValue,
             "transactionCategory": transactionCategoryValue,
             "transactionDescription": transactionDescription.text,
-            "transactionTime": milidate,
+            "transactionTime": _currentDate.millisecondsSinceEpoch,
             "transactionUserID": FirebaseAuth.instance.currentUser?.uid,
-            "transactionID": timestamp.toString(),
+            "transactionID": widget.transactionID,
           }).then((value) {
             transactionCategory.clear();
             Navigator.push(
@@ -328,8 +348,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             });
           });
         },
-        child: const Icon(Icons.add),
-
+        child: const Icon(Icons.save),
       ),
     );
   }

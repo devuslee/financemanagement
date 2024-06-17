@@ -5,7 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:financemanagement/reusable_widget/reusable_email_text_field.dart'; // Import the email widget
 import 'package:financemanagement/reusable_widget/reusable_password_text_field.dart';
-import '../reusable_widget/reusable_widget.dart'; // Import the password widget
+import '../reusable_widget/reusable_widget.dart';
+import 'package:financemanagement/screens/forget_password_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -45,38 +46,38 @@ class _SignInScreenState extends State<SignInScreen> {
                   child: Column(
                     children: <Widget>[
                       logoWidget("assets/images/logo.png"),
-                      SizedBox(height: 30),
+                      SizedBox(height: 15),
                       ReusableEmailTextField(
                         labelText: "Enter email",
                         icon: Icons.person_outline,
                         controller: emailController,
-                        // validator: (value) {
-                        //   if (value == null || value.isEmpty) {
-                        //     return 'Please fill in your email';
-                        //   }
-                        //   // Using a basic email regex for validation
-                        //   String pattern =
-                        //       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
-                        //   RegExp regex = RegExp(pattern);
-                        //   if (!regex.hasMatch(value)) {
-                        //     return 'Incorrect email format';
-                        //   }
-                        //   return null;
-                        // },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please fill in your email';
+                          }
+                          // Using a basic email regex for validation
+                          String pattern =
+                              r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
+                          RegExp regex = RegExp(pattern);
+                          if (!regex.hasMatch(value)) {
+                            return 'Incorrect email format';
+                          }
+                          return null;
+                        },
                       ),
-                      SizedBox(height: 30),
+                      SizedBox(height: 15),
                       ReusablePasswordTextField(
                         labelText: "Enter password",
                         icon: Icons.lock_outline,
                         controller: passwordController,
-                        // validator: (value) {
-                        //   if (value == null || value.isEmpty) {
-                        //     return 'Please fill in your password';
-                        //   }
-                        //   return null;
-                        // },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please fill in your password';
+                          }
+                          return null;
+                        },
                       ),
-                      SizedBox(height: 30),
+                      SizedBox(height: 15),
                       signInButton(context, "Sign In", Colors.grey.shade300, () {
                         if (_formKey.currentState!.validate()) {
                           // Clear the previous error message
@@ -87,8 +88,8 @@ class _SignInScreenState extends State<SignInScreen> {
                           // Auto login logic
                           FirebaseAuth.instance
                               .signInWithEmailAndPassword(
-                              email: "devuslee12@yahoo.com",
-                              password: "Ilust1966!")
+                              email: emailController.text,
+                              password: passwordController.text)
                               .then((value) {
                             Navigator.push(
                                 context,
@@ -127,6 +128,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           style: TextStyle(color: Colors.red),
                         ),
                       SignUpOption(),
+                      ForgotPasswordOption(),
                     ],
                   ),
                 ),
@@ -161,4 +163,21 @@ class _SignInScreenState extends State<SignInScreen> {
       ],
     );
   }
+
+  Widget ForgotPasswordOption() {
+    return TextButton(
+      onPressed: () {
+        // Navigate to Forgot Password screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+        );
+      },
+      child: const Text(
+        "Forgot Password?",
+        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
 }
+

@@ -202,7 +202,7 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
         fit: BoxFit.cover,
       ),
     ),
-        Padding(
+          Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
@@ -216,6 +216,7 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
                   size: 50,
                 ),
               ),
+              SizedBox(width: 10), // Add spacing between icon button and text
               Text(
                 formattedDate,
                 style: TextStyle(
@@ -223,6 +224,7 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              SizedBox(width: 10), // Add spacing between text and icon button
               IconButton(
                 onPressed: _incrementDate,
                 icon: Icon(
@@ -232,6 +234,7 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
               ),
             ],
           ),
+
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10.0),
             child: DropdownButton<String>(
@@ -243,8 +246,7 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
                   chartType = newValue!;
                 });
               },
-              items:
-                  chartTypeList.map<DropdownMenuItem<String>>((String value) {
+              items: chartTypeList.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -396,6 +398,7 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
                         ),
                       ),
                     ),
+
                     SliverToBoxAdapter(
                       child: Container(
                         padding:
@@ -467,8 +470,17 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
                         ),
                       ),
                     ),
+                    SliverToBoxAdapter(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        child: Divider(
+                          color: Colors.black.withOpacity(0.3),
+                          thickness: 1.0,
+                        ),
+                      ),
+                    ),
                     SliverPadding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: EdgeInsets.symmetric(horizontal: 20),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
@@ -603,7 +615,6 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
                             return Column(
                               //add a sized box below the last list tile
                               children: [
-                                SizedBox(height: 40),
                                 ...tiles,
                                 SizedBox(height: 100),
                               ],

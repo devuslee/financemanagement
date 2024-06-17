@@ -209,7 +209,7 @@ class _CategoryContentState extends State<CategoryContent> {
 
                                                   // References to the Firestore collections
                                                   DocumentReference categoryDocRef = FirebaseFirestore.instance
-                                                      .collection("Categories")
+                                                      .collection("ExpenseCategories")
                                                       .doc(currentUser);
 
                                                   Query<Map<String, dynamic>> transactionQuery = FirebaseFirestore.instance
@@ -342,7 +342,7 @@ class _CategoryContentState extends State<CategoryContent> {
 
                                                   // References to the Firestore collections
                                                   DocumentReference categoryDocRef = FirebaseFirestore.instance
-                                                      .collection("Categories")
+                                                      .collection("IncomeCategories")
                                                       .doc(currentUser);
 
                                                   Query<Map<String, dynamic>> transactionQuery = FirebaseFirestore.instance
