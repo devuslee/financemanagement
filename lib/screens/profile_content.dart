@@ -349,38 +349,6 @@ class _ProfileScreenState extends State<ProfileContent> {
                   },
                 ),
               ),
-              Card(
-                child: ListTile(
-                  title: Text("Delete Account"),
-                  subtitle: Text("Delete your account permanently"),
-                  leading: Icon(Icons.delete),
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text("Delete Account"),
-                          content: Text("Are you sure you want to delete your account?"),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context); // Close the dialog
-                              },
-                              child: Text("Cancel"),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                // Delete account logic here
-                              },
-                              child: Text("Delete"),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
             ],
           ),
         ],

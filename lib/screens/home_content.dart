@@ -117,351 +117,403 @@ class _HomeContentState extends State<HomeContent> {
                           .snapshots(),
                       builder: (context, IncomecategoriesSnapshot) {
                         return StreamBuilder<DocumentSnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection("ExpenseCategories")
-                                .doc(FirebaseAuth.instance.currentUser!.uid)
-                                .snapshots(),
-                            builder: (context, ExpensecategoriesSnapshot) {
-                        List<Row> transactionWidgets = [];
-                        int totalIncome = 0;
-                        int totalMonthExpense = 0;
-                        int totalMonthIncome = 0;
-                        int totalExpense = 0;
-                        String userCurrency = "";
+                          stream: FirebaseFirestore.instance
+                              .collection("ExpenseCategories")
+                              .doc(FirebaseAuth.instance.currentUser!.uid)
+                              .snapshots(),
+                          builder: (context, ExpensecategoriesSnapshot) {
+                            List<Row> transactionWidgets = [];
+                            int totalIncome = 0;
+                            int totalMonthExpense = 0;
+                            int totalMonthIncome = 0;
+                            int totalExpense = 0;
+                            String userCurrency = "";
 
-                        int userDecimal = 0;
-                        String userPosition = "";
-                        String userCategory = "";
+                            int userDecimal = 0;
+                            String userPosition = "";
+                            String userCategory = "";
 
-                        if (userSnapshot.hasData) {
-                          final tempuserCurrency =
-                              userSnapshot.data?.get("userCurrency");
-                          final tempuserBudget =
-                              userSnapshot.data?.get("userBudget");
-                          final tempuserDecimal =
-                              userSnapshot.data?.get("userDecimal");
-                          final tempuserPosition =
-                              userSnapshot.data?.get("userPosition");
+                            if (userSnapshot.hasData) {
+                              final tempuserCurrency =
+                                  userSnapshot.data?.get("userCurrency");
+                              final tempuserBudget =
+                                  userSnapshot.data?.get("userBudget");
+                              final tempuserDecimal =
+                                  userSnapshot.data?.get("userDecimal");
+                              final tempuserPosition =
+                                  userSnapshot.data?.get("userPosition");
 
-                          userCurrency = tempuserCurrency;
-                          userBudget = tempuserBudget;
-                          userDecimal = tempuserDecimal;
-                          userPosition = tempuserPosition;
-                        }
+                              userCurrency = tempuserCurrency;
+                              userBudget = tempuserBudget;
+                              userDecimal = tempuserDecimal;
+                              userPosition = tempuserPosition;
+                            }
 
-                        if (transactionSnapshot.hasData) {
-                          final transactions =
-                              transactionSnapshot.data?.docs.toList();
-                          transactions?.sort((a, b) => b["transactionTime"]
-                              .compareTo(a["transactionTime"]));
-                          for (var transaction in transactions!) {
-                            final transactionName =
-                                transaction["transactionName"];
-                            final transactionAmount =
-                                transaction["transactionAmount"];
-                            final transactionType =
-                                transaction["transactionType"];
-                            final transactionDescription =
-                                transaction["transactionDescription"];
-                            IconData transactionCategory = Icons.category;
-                            final transactionUserID =
-                                transaction["transactionUserID"];
-                            final transactionTime =
-                                transaction["transactionTime"];
+                            if (transactionSnapshot.hasData) {
+                              final transactions =
+                                  transactionSnapshot.data?.docs.toList();
+                              transactions?.sort((a, b) => b["transactionTime"]
+                                  .compareTo(a["transactionTime"]));
+                              for (var transaction in transactions!) {
+                                final transactionName =
+                                    transaction["transactionName"];
+                                final transactionAmount =
+                                    transaction["transactionAmount"];
+                                final transactionType =
+                                    transaction["transactionType"];
+                                final transactionDescription =
+                                    transaction["transactionDescription"];
+                                IconData transactionCategory = Icons.category;
+                                final transactionUserID =
+                                    transaction["transactionUserID"];
+                                final transactionTime =
+                                    transaction["transactionTime"];
 
-                            if (transactionUserID ==
-                                FirebaseAuth.instance.currentUser!.uid) {
-                              DateTime transactionDateTime =
-                                  DateTime.fromMillisecondsSinceEpoch(
-                                      transactionTime);
+                                if (transactionUserID ==
+                                    FirebaseAuth.instance.currentUser!.uid) {
+                                  DateTime transactionDateTime =
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          transactionTime);
 
-                              if (transactionType == "Income") {
-                                if (IncomecategoriesSnapshot.hasData) {
-                                  String tempcategories = IncomecategoriesSnapshot.data
-                                      ?.get(transaction["transactionCategory"]);
+                                  if (transactionType == "Income") {
+                                    if (IncomecategoriesSnapshot.hasData) {
+                                      String tempcategories =
+                                          IncomecategoriesSnapshot.data?.get(
+                                              transaction[
+                                                  "transactionCategory"]);
 
-                                  userCategory = tempcategories;
+                                      userCategory = tempcategories;
+                                    }
+                                  } else {
+                                    if (ExpensecategoriesSnapshot.hasData) {
+                                      String tempcategories =
+                                          ExpensecategoriesSnapshot.data?.get(
+                                              transaction[
+                                                  "transactionCategory"]);
+
+                                      userCategory = tempcategories;
+                                    }
+                                  }
+
+                                  if (userCategory == "Food") {
+                                    transactionCategory = Icons.fastfood;
+                                  } else if (userCategory == "Home") {
+                                    transactionCategory = Icons.home;
+                                  } else if (userCategory == "Person") {
+                                    transactionCategory = Icons.person;
+                                  } else if (userCategory == "Shopping") {
+                                    transactionCategory = Icons.shopping_cart;
+                                  } else if (userCategory == "Car") {
+                                    transactionCategory = Icons.car_rental;
+                                  } else if (userCategory == "Health") {
+                                    transactionCategory =
+                                        Icons.health_and_safety;
+                                  } else if (userCategory == "Education") {
+                                    transactionCategory = Icons.book;
+                                  } else if (userCategory == "Entertainment") {
+                                    transactionCategory = Icons.movie;
+                                  } else if (userCategory == "Baby") {
+                                    transactionCategory =
+                                        Icons.baby_changing_station;
+                                  } else if (userCategory == "Social") {
+                                    transactionCategory = Icons.event;
+                                  } else if (userCategory == "Salary") {
+                                    transactionCategory = Icons.money;
+                                  } else if (userCategory == "Business") {
+                                    transactionCategory = Icons.business;
+                                  } else if (userCategory == "Gift") {
+                                    transactionCategory = Icons.card_giftcard;
+                                  } else if (userCategory == "Investment") {
+                                    transactionCategory = Icons.attach_money;
+                                  } else if (userCategory == "Loan") {
+                                    transactionCategory = Icons.money_off;
+                                  }
+
+                                  final transactionWidget = Row(
+                                    children: [
+                                      Text(transactionName),
+                                      Text(transactionAmount),
+                                      Text(transactionType),
+                                      Text(transactionCategory.codePoint
+                                          .toString()),
+                                      Text(transactionDescription),
+                                      Text(userCategory),
+                                    ],
+                                  );
+                                  if (transactionUserID ==
+                                          FirebaseAuth
+                                              .instance.currentUser!.uid &&
+                                      transactionDateTime.year ==
+                                          _currentDate.year &&
+                                      transactionDateTime.month ==
+                                          _currentDate.month &&
+                                      transactionDateTime.day ==
+                                          _currentDate.day) {
+                                    transactionWidgets.add(transactionWidget);
+                                    if (transactionType == "Income") {
+                                      totalIncome +=
+                                          int.parse(transactionAmount);
+                                    } else {
+                                      totalExpense +=
+                                          int.parse(transactionAmount);
+                                    }
+                                  }
+
+                                  if (transactionUserID ==
+                                          FirebaseAuth
+                                              .instance.currentUser!.uid &&
+                                      transactionDateTime.year ==
+                                          _currentDate.year &&
+                                      transactionDateTime.month ==
+                                          _currentDate.month) {
+                                    if (transactionType == "Income") {
+                                      totalMonthIncome +=
+                                          int.parse(transactionAmount);
+                                    } else {
+                                      totalMonthExpense +=
+                                          int.parse(transactionAmount);
+                                    }
+                                  }
+
+                                  if (totalMonthExpense > userBudget) {
+                                    budgetSurpasses = true;
+                                  } else {
+                                    budgetSurpasses = false;
+                                  }
                                 }
-                              } else {
-                                if (ExpensecategoriesSnapshot.hasData) {
-                                  String tempcategories = ExpensecategoriesSnapshot.data
-                                      ?.get(transaction["transactionCategory"]);
-
-                                  userCategory = tempcategories;
-                                }
-                              }
-
-                              if (userCategory == "Food") {
-                                transactionCategory = Icons.fastfood;
-                              } else if (userCategory == "Home") {
-                                transactionCategory = Icons.home;
-                              } else if (userCategory == "Person") {
-                                transactionCategory = Icons.person;
-                              } else if (userCategory == "Shopping") {
-                                transactionCategory = Icons.shopping_cart;
-                              } else if (userCategory == "Car") {
-                                transactionCategory = Icons.car_rental;
-                              } else if (userCategory == "Health") {
-                                transactionCategory = Icons.health_and_safety;
-                              } else if (userCategory == "Education") {
-                                transactionCategory = Icons.book;
-                              } else if (userCategory == "Entertainment") {
-                                transactionCategory = Icons.movie;
-                              } else if (userCategory == "Baby") {
-                                transactionCategory =
-                                    Icons.baby_changing_station;
-                              } else if (userCategory == "Social") {
-                                transactionCategory = Icons.event;
-                              } else if (userCategory == "Salary") {
-                                transactionCategory = Icons.money;
-                              } else if (userCategory == "Business") {
-                                transactionCategory = Icons.business;
-                              } else if (userCategory == "Gift") {
-                                transactionCategory = Icons.card_giftcard;
-                              } else if (userCategory == "Investment") {
-                                transactionCategory = Icons.attach_money;
-                              } else if (userCategory == "Loan") {
-                                transactionCategory = Icons.money_off;
-                              }
-
-                              final transactionWidget = Row(
-                                children: [
-                                  Text(transactionName),
-                                  Text(transactionAmount),
-                                  Text(transactionType),
-                                  Text(
-                                      transactionCategory.codePoint.toString()),
-                                  Text(transactionDescription),
-                                  Text(userCategory),
-                                ],
-                              );
-                              if (transactionUserID ==
-                                      FirebaseAuth.instance.currentUser!.uid &&
-                                  transactionDateTime.year ==
-                                      _currentDate.year &&
-                                  transactionDateTime.month ==
-                                      _currentDate.month &&
-                                  transactionDateTime.day == _currentDate.day) {
-                                transactionWidgets.add(transactionWidget);
-                                if (transactionType == "Income") {
-                                  totalIncome += int.parse(transactionAmount);
-                                } else {
-                                  totalExpense += int.parse(transactionAmount);
-                                }
-                              }
-
-                              if (transactionUserID ==
-                                      FirebaseAuth.instance.currentUser!.uid &&
-                                  transactionDateTime.year ==
-                                      _currentDate.year &&
-                                  transactionDateTime.month ==
-                                      _currentDate.month) {
-                                if (transactionType == "Income") {
-                                  totalMonthIncome +=
-                                      int.parse(transactionAmount);
-                                } else {
-                                  totalMonthExpense +=
-                                      int.parse(transactionAmount);
-                                }
-                              }
-
-                              if (totalMonthExpense > userBudget) {
-                                budgetSurpasses = true;
-                              } else {
-                                budgetSurpasses = false;
                               }
                             }
-                          }
-                        }
-                        return Expanded(
-                          child: CustomScrollView(
-                            slivers: [
-                              SliverToBoxAdapter(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 20),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "Expenses",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 20),
-                                      Expanded(
-                                        child: Text(
-                                          "Income",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 20),
-                                      Expanded(
-                                        child: Text(
-                                          "Balance",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SliverToBoxAdapter(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 20),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          formatCurrency(
-                                              totalExpense,
-                                              userCurrency ?? "MYR",
-                                              userPosition ?? "left",
-                                              userDecimal ?? 2),
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.red,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 20),
-                                      Expanded(
-                                        child: Text(
-                                          formatCurrency(
-                                              totalIncome,
-                                              userCurrency ?? "MYR",
-                                              userPosition ?? "left",
-                                              userDecimal ?? 2),
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.green,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 20),
-                                      Expanded(
-                                        child: Text(
-                                          formatCurrency(
-                                              totalIncome - totalExpense,
-                                              userCurrency ?? "MYR",
-                                              userPosition ?? "left",
-                                              userDecimal ?? 2),
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: totalIncome - totalExpense >
-                                                    0
-                                                ? Colors.green
-                                                : totalIncome - totalExpense < 0
-                                                    ? Colors.red
-                                                    : Colors.grey,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SliverPadding(
-                                padding: EdgeInsets.all(8.0),
-                                sliver: SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (context, index) {
-                                      List<Widget> tiles = [];
-
-                                      for (var transactionWidget
-                                          in transactionWidgets) {
-                                        tiles.add(
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.3),
-                                                  width: 1.0,
-                                                ),
+                            return Expanded(
+                              child: CustomScrollView(
+                                slivers: [
+                                  SliverToBoxAdapter(
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 20),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              "Expenses",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.black,
                                               ),
                                             ),
-                                            child: ListTile(
-                                              leading: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                child: Icon(
-                                                  IconData(
-                                                    int.parse(
-                                                        ((transactionWidget
+                                          ),
+                                          SizedBox(width: 20),
+                                          Expanded(
+                                            child: Text(
+                                              "Income",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(width: 20),
+                                          Expanded(
+                                            child: Text(
+                                              "Balance",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SliverToBoxAdapter(
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 20),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              formatCurrency(
+                                                  totalExpense,
+                                                  userCurrency ?? "MYR",
+                                                  userPosition ?? "left",
+                                                  userDecimal ?? 2),
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(width: 20),
+                                          Expanded(
+                                            child: Text(
+                                              formatCurrency(
+                                                  totalIncome,
+                                                  userCurrency ?? "MYR",
+                                                  userPosition ?? "left",
+                                                  userDecimal ?? 2),
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.green,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(width: 20),
+                                          Expanded(
+                                            child: Text(
+                                              formatCurrency(
+                                                  totalIncome - totalExpense,
+                                                  userCurrency ?? "MYR",
+                                                  userPosition ?? "left",
+                                                  userDecimal ?? 2),
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: totalIncome -
+                                                            totalExpense >
+                                                        0
+                                                    ? Colors.green
+                                                    : totalIncome -
+                                                                totalExpense <
+                                                            0
+                                                        ? Colors.red
+                                                        : Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SliverPadding(
+                                    padding: EdgeInsets.all(8.0),
+                                    sliver: SliverList(
+                                      delegate: SliverChildBuilderDelegate(
+                                        (context, index) {
+                                          List<Widget> tiles = [];
+
+                                          for (var transactionWidget
+                                              in transactionWidgets) {
+                                            tiles.add(
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  border: Border(
+                                                    bottom: BorderSide(
+                                                      color: Colors.black
+                                                          .withOpacity(0.3),
+                                                      width: 1.0,
+                                                    ),
+                                                  ),
+                                                ),
+                                                child: ListTile(
+                                                  leading: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0),
+                                                    child: Icon(
+                                                      IconData(
+                                                        int.parse(((transactionWidget
                                                                         as Row)
                                                                     .children[3]
                                                                 as Text)
                                                             .data!),
-                                                    fontFamily: 'MaterialIcons',
+                                                        fontFamily:
+                                                            'MaterialIcons',
+                                                      ),
+                                                      size: 40,
+                                                      color: Colors.black,
+                                                    ),
                                                   ),
-                                                  size: 40,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                              title: GestureDetector(
-                                                onTap: () {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return StatefulBuilder(
-                                                          builder: (context,
-                                                              setState) {
-                                                        return AlertDialog(
-                                                          title: Text(
-                                                            "Transaction Details",
-                                                            style: TextStyle(
-                                                              fontSize: 20,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                          content: Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: [
-                                                              Text(
-                                                                "Name: ${((transactionWidget as Row).children[0] as Text).data ?? 'Null'}",
+                                                  title: GestureDetector(
+                                                    onTap: () {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return StatefulBuilder(
+                                                              builder: (context,
+                                                                  setState) {
+                                                            return AlertDialog(
+                                                              title: Text(
+                                                                "Transaction Details",
                                                                 style:
                                                                     TextStyle(
-                                                                  fontSize: 16,
+                                                                  fontSize: 20,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
                                                                 ),
                                                               ),
-                                                              Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
+                                                              content: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
                                                                 children: [
                                                                   Text(
-                                                                    "Amount: ",
+                                                                    "Name: ${((transactionWidget as Row).children[0] as Text).data ?? 'Null'}",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      Text(
+                                                                        "Amount: ",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              16,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                        ),
+                                                                      ),
+                                                                      Text(
+                                                                        "${formatCurrency(
+                                                                          int.tryParse(((transactionWidget as Row).children[1] as Text).data ?? '') ??
+                                                                              0,
+                                                                          userCurrency ??
+                                                                              "MYR",
+                                                                          userPosition ??
+                                                                              "left",
+                                                                          userDecimal ??
+                                                                              2,
+                                                                        )}",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              16,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          color: ((transactionWidget as Row).children[2] as Text).data == 'Income'
+                                                                              ? Colors.green
+                                                                              : Colors.red,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  Text(
+                                                                    "Type: ${((transactionWidget as Row).children[2] as Text).data ?? 'Null'}",
                                                                     style:
                                                                         TextStyle(
                                                                       fontSize:
@@ -472,17 +524,7 @@ class _HomeContentState extends State<HomeContent> {
                                                                     ),
                                                                   ),
                                                                   Text(
-                                                                    "${formatCurrency(
-                                                                      int.tryParse(((transactionWidget as Row).children[1] as Text).data ??
-                                                                              '') ??
-                                                                          0,
-                                                                      userCurrency ??
-                                                                          "MYR",
-                                                                      userPosition ??
-                                                                          "left",
-                                                                      userDecimal ??
-                                                                          2,
-                                                                    )}",
+                                                                    "Category: ${((transactionWidget as Row).children[5] as Text).data ?? 'Null'}",
                                                                     style:
                                                                         TextStyle(
                                                                       fontSize:
@@ -490,288 +532,263 @@ class _HomeContentState extends State<HomeContent> {
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .bold,
-                                                                      color: ((transactionWidget as Row).children[2] as Text).data ==
-                                                                              'Income'
-                                                                          ? Colors
-                                                                              .green
-                                                                          : Colors
-                                                                              .red,
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                    "Description: ${((transactionWidget as Row).children[4] as Text).data ?? 'Null'}",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
                                                                     ),
                                                                   ),
                                                                 ],
                                                               ),
-                                                              Text(
-                                                                "Type: ${((transactionWidget as Row).children[2] as Text).data ?? 'Null'}",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                "Category: ${((transactionWidget as Row).children[5] as Text).data ?? 'Null'}",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                "Description: ${((transactionWidget as Row).children[4] as Text).data ?? 'Null'}",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          actions: [
-                                                            ElevatedButton(
-                                                              onPressed:
-                                                                  () async {
-                                                                try {
-                                                                  var currentUser =
-                                                                      FirebaseAuth
+                                                              actions: [
+                                                                ElevatedButton(
+                                                                  onPressed:
+                                                                      () async {
+                                                                    try {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+
+                                                                      var currentUser = FirebaseAuth
                                                                           .instance
                                                                           .currentUser!
                                                                           .uid;
 
-                                                                  Query<Map<String, dynamic>> transactionQuery = FirebaseFirestore
-                                                                      .instance
-                                                                      .collection(
-                                                                          "Transaction")
-                                                                      .where(
-                                                                          'transactionCategory',
-                                                                          isEqualTo: ((transactionWidget as Row).children[5] as Text)
-                                                                              .data)
-                                                                      .where(
-                                                                          'transactionName',
-                                                                          isEqualTo: ((transactionWidget as Row).children[0] as Text)
-                                                                              .data)
-                                                                      .where(
-                                                                          'transactionAmount',
-                                                                          isEqualTo: ((transactionWidget as Row).children[1] as Text)
-                                                                              .data)
-                                                                      .where(
-                                                                          'transactionType',
-                                                                          isEqualTo:
-                                                                              ((transactionWidget as Row).children[2] as Text).data)
-                                                                      .where('transactionDescription', isEqualTo: ((transactionWidget as Row).children[4] as Text).data)
-                                                                      .where('transactionUserID', isEqualTo: currentUser);
+                                                                      Query<Map<String, dynamic>> transactionQuery = FirebaseFirestore
+                                                                          .instance
+                                                                          .collection(
+                                                                              "Transaction")
+                                                                          .where(
+                                                                              'transactionCategory',
+                                                                              isEqualTo: ((transactionWidget as Row).children[5] as Text)
+                                                                                  .data)
+                                                                          .where(
+                                                                              'transactionName',
+                                                                              isEqualTo: ((transactionWidget as Row).children[0] as Text)
+                                                                                  .data)
+                                                                          .where(
+                                                                              'transactionAmount',
+                                                                              isEqualTo: ((transactionWidget as Row).children[1] as Text)
+                                                                                  .data)
+                                                                          .where(
+                                                                              'transactionType',
+                                                                              isEqualTo: ((transactionWidget as Row).children[2] as Text).data)
+                                                                          .where('transactionDescription', isEqualTo: ((transactionWidget as Row).children[4] as Text).data)
+                                                                          .where('transactionUserID', isEqualTo: currentUser);
 
-                                                                  // Fetch and delete all transactions associated with the category
-                                                                  QuerySnapshot<
-                                                                          Map<String,
-                                                                              dynamic>>
-                                                                      transactionSnapshot =
-                                                                      await transactionQuery
-                                                                          .get();
-                                                                  for (var doc
-                                                                      in transactionSnapshot
-                                                                          .docs) {
-                                                                    await doc
-                                                                        .reference
-                                                                        .delete();
-                                                                  }
-
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                } catch (e) {
-                                                                  // Handle any errors
-                                                                  print(
-                                                                      "Failed to delete category: $e");
-                                                                  // Optionally, show an alert dialog to inform the user of the error
-                                                                  showDialog(
-                                                                    context:
-                                                                        context,
-                                                                    builder:
-                                                                        (BuildContext
-                                                                            context) {
-                                                                      return AlertDialog(
-                                                                        title: Text(
-                                                                            "Error"),
-                                                                        content:
-                                                                            Text("Failed to delete category: $e"),
-                                                                        actions: [
-                                                                          TextButton(
-                                                                            onPressed:
-                                                                                () {
-                                                                              Navigator.of(context).pop();
-                                                                            },
-                                                                            child:
-                                                                                Text("OK"),
-                                                                          ),
-                                                                        ],
+                                                                      // Fetch and delete all transactions associated with the category
+                                                                      QuerySnapshot<
+                                                                              Map<String, dynamic>>
+                                                                          transactionSnapshot =
+                                                                          await transactionQuery
+                                                                              .get();
+                                                                      for (var doc
+                                                                          in transactionSnapshot
+                                                                              .docs) {
+                                                                        await doc
+                                                                            .reference
+                                                                            .delete();
+                                                                      }
+                                                                    } catch (e) {
+                                                                      // Handle any errors
+                                                                      print(
+                                                                          "Failed to delete category: $e");
+                                                                      // Optionally, show an alert dialog to inform the user of the error
+                                                                      showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext
+                                                                                context) {
+                                                                          return AlertDialog(
+                                                                            title:
+                                                                                Text("Error"),
+                                                                            content:
+                                                                                Text("Failed to delete category: $e"),
+                                                                            actions: [
+                                                                              TextButton(
+                                                                                onPressed: () {
+                                                                                  Navigator.of(context).pop();
+                                                                                },
+                                                                                child: Text("OK"),
+                                                                              ),
+                                                                            ],
+                                                                          );
+                                                                        },
                                                                       );
-                                                                    },
-                                                                  );
-                                                                }
-                                                              },
-                                                              child: Text(
-                                                                  'Delete',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .red)),
+                                                                    }
+                                                                  },
+                                                                  child: Text(
+                                                                      'Delete',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.red)),
+                                                                ),
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                  child: Text(
+                                                                    "Close",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          });
+                                                        },
+                                                      );
+                                                    },
+                                                    child: Text(
+                                                      (((transactionWidget as Row)
+                                                                              .children[0]
+                                                                          as Text)
+                                                                      .data ??
+                                                                  '')
+                                                              .isEmpty
+                                                          ? 'Null'
+                                                          : ((transactionWidget
+                                                                          as Row)
+                                                                      .children[
+                                                                  0] as Text)
+                                                              .data!,
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  subtitle: Text(
+                                                    (((transactionWidget as Row)
+                                                                            .children[4]
+                                                                        as Text)
+                                                                    .data ??
+                                                                '')
+                                                            .isEmpty
+                                                        ? 'Null'
+                                                        : ((transactionWidget
+                                                                        as Row)
+                                                                    .children[4]
+                                                                as Text)
+                                                            .data!,
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  trailing: Text(
+                                                    formatCurrency(
+                                                      int.tryParse(((transactionWidget
+                                                                              as Row)
+                                                                          .children[
+                                                                      1] as Text)
+                                                                  .data ??
+                                                              '') ??
+                                                          0,
+                                                      userCurrency ?? "MYR",
+                                                      userPosition ?? "left",
+                                                      userDecimal ?? 2,
+                                                    ),
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: ((transactionWidget
+                                                                              as Row)
+                                                                          .children[
+                                                                      2] as Text)
+                                                                  .data ==
+                                                              'Income'
+                                                          ? Colors.green
+                                                          : Colors.red,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }
+
+                                          return Column(
+                                            //if tiles empty show an empty transaction icon
+                                            children: tiles.isEmpty
+                                                ? [
+                                                    Center(
+                                                      child: Padding(
+                                                        padding: const EdgeInsets
+                                                            .all(
+                                                            60.0), // Reduced padding for mobile responsiveness
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Image.asset(
+                                                              "assets/images/empty_transaction.png",
+                                                              height: 100,
+                                                              width: 100,
                                                             ),
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                Navigator.pop(
-                                                                    context);
-                                                              },
-                                                              child: Text(
-                                                                "Close",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                                                            SizedBox(
+                                                                height: 20),
+                                                            Container(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(10),
+                                                              child: FittedBox(
+                                                                fit: BoxFit
+                                                                    .scaleDown,
+                                                                child: Text(
+                                                                  "No transactions found",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        20,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),
                                                           ],
-                                                        );
-                                                      });
-                                                    },
-                                                  );
-                                                },
-                                                child: Text(
-                                                  (((transactionWidget as Row)
-                                                                          .children[0]
-                                                                      as Text)
-                                                                  .data ??
-                                                              '')
-                                                          .isEmpty
-                                                      ? 'Null'
-                                                      : ((transactionWidget
-                                                                      as Row)
-                                                                  .children[0]
-                                                              as Text)
-                                                          .data!,
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                              subtitle: Text(
-                                                (((transactionWidget as Row)
-                                                                        .children[
-                                                                    4] as Text)
-                                                                .data ??
-                                                            '')
-                                                        .isEmpty
-                                                    ? 'Null'
-                                                    : ((transactionWidget
-                                                                    as Row)
-                                                                .children[4]
-                                                            as Text)
-                                                        .data!,
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              trailing: Text(
-                                                formatCurrency(
-                                                  int.tryParse(((transactionWidget
-                                                                          as Row)
-                                                                      .children[
-                                                                  1] as Text)
-                                                              .data ??
-                                                          '') ??
-                                                      0,
-                                                  userCurrency ?? "MYR",
-                                                  userPosition ?? "left",
-                                                  userDecimal ?? 2,
-                                                ),
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: ((transactionWidget
-                                                                          as Row)
-                                                                      .children[
-                                                                  2] as Text)
-                                                              .data ==
-                                                          'Income'
-                                                      ? Colors.green
-                                                      : Colors.red,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }
-
-                                      return Column(
-                                        //if tiles empty show an empty transaction icon
-                                        children: tiles.isEmpty
-                                            ? [
-                                                Center(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .all(
-                                                        60.0), // Reduced padding for mobile responsiveness
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Image.asset(
-                                                          "assets/images/empty_transaction.png",
-                                                          height: 100,
-                                                          width: 100,
                                                         ),
-                                                        SizedBox(height: 20),
-                                                        Container(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  10),
-                                                          child: FittedBox(
-                                                            fit: BoxFit
-                                                                .scaleDown,
-                                                            child: Text(
-                                                              "No transactions found",
-                                                              style: TextStyle(
-                                                                fontSize: 20,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                )
-                                              ]
-                                            : tiles,
-                                      );
-                                    },
-                                    childCount: 1,
+                                                      ),
+                                                    )
+                                                  ]
+                                                : tiles,
+                                          );
+                                        },
+                                        childCount: 1,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         );
                       },
-
                     );
-
-                  },
-                );
                   },
                 );
               },

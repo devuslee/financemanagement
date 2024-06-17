@@ -203,7 +203,7 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
       ),
     ),
         Padding(
-      padding: const EdgeInsets.all(40.0),
+      padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
           Row(
@@ -480,7 +480,7 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
                                     decoration: BoxDecoration(
                                       border: Border(
                                         bottom: BorderSide(
-                                          color: Colors.grey.withOpacity(0.3),
+                                          color: Colors.black.withOpacity(0.3),
                                           width: 1.0,
                                         ),
                                       ),
@@ -532,6 +532,7 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
                                       ),
                                     ),
                                   ),
+
                                 );
                               }
                             }
@@ -543,7 +544,7 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
                                     decoration: BoxDecoration(
                                       border: Border(
                                         bottom: BorderSide(
-                                          color: Colors.grey.withOpacity(0.3),
+                                          color: Colors.black.withOpacity(0.3),
                                           width: 1.0,
                                         ),
                                       ),
@@ -600,8 +601,12 @@ class _AnalyticsScreenState extends State<AnalyticsContent> {
                             }
 
                             return Column(
-                              //if tiles empty return something else else
-                              children: tiles,
+                              //add a sized box below the last list tile
+                              children: [
+                                SizedBox(height: 40),
+                                ...tiles,
+                                SizedBox(height: 100),
+                              ],
                             );
                           },
                           childCount: 1,

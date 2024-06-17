@@ -50,31 +50,31 @@ class _SignInScreenState extends State<SignInScreen> {
                         labelText: "Enter email",
                         icon: Icons.person_outline,
                         controller: emailController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please fill in your email';
-                          }
-                          // Using a basic email regex for validation
-                          String pattern =
-                              r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
-                          RegExp regex = RegExp(pattern);
-                          if (!regex.hasMatch(value)) {
-                            return 'Incorrect email format';
-                          }
-                          return null;
-                        },
+                        // validator: (value) {
+                        //   if (value == null || value.isEmpty) {
+                        //     return 'Please fill in your email';
+                        //   }
+                        //   // Using a basic email regex for validation
+                        //   String pattern =
+                        //       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
+                        //   RegExp regex = RegExp(pattern);
+                        //   if (!regex.hasMatch(value)) {
+                        //     return 'Incorrect email format';
+                        //   }
+                        //   return null;
+                        // },
                       ),
                       SizedBox(height: 30),
                       ReusablePasswordTextField(
                         labelText: "Enter password",
                         icon: Icons.lock_outline,
                         controller: passwordController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please fill in your password';
-                          }
-                          return null;
-                        },
+                        // validator: (value) {
+                        //   if (value == null || value.isEmpty) {
+                        //     return 'Please fill in your password';
+                        //   }
+                        //   return null;
+                        // },
                       ),
                       SizedBox(height: 30),
                       signInButton(context, "Sign In", Colors.grey.shade300, () {
@@ -87,8 +87,8 @@ class _SignInScreenState extends State<SignInScreen> {
                           // Auto login logic
                           FirebaseAuth.instance
                               .signInWithEmailAndPassword(
-                              email: emailController.text,
-                              password: passwordController.text)
+                              email: "devuslee12@yahoo.com",
+                              password: "Ilust1966!")
                               .then((value) {
                             Navigator.push(
                                 context,
