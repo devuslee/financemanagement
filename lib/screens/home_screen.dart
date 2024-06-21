@@ -67,9 +67,40 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: currentPageIndex == 0
           ? FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
+          if (budgetSurpasses == true) {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text("Warning"),
+                  content: Text("You have surpassed your budget!"),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddTransactionScreen(),
+                          ),
+                        );
+                      },
+                      child: Text("Continue"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text("Cancel"),
+                    ),
+                  ],
+                );
+              },
+            );
+          } else
+            Navigator.push(
+              context,
+              MaterialPageRoute(
               builder: (context) => AddTransactionScreen(),
             ),
           );
