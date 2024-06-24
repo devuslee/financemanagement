@@ -1,16 +1,33 @@
-# financemanagement
+Finiancal Management Application
+6002CEM – Mobile App Development Assignment
 
-This is the mobile application project
+Members:
 
-## Getting Started
+Derrick Chew Min Chiang
+Lee Yu Xuan
 
-This project is a starting point for a Flutter application.
+Money Map is a finiance tracking application that developed with Flutter and Firebase. It helsp people to record down income and expenses to make better arrangement for money flows
 
-A few resources to get you started if this is your first Flutter project:
+Key Features:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Log In
+Register
+Transaction Tracking    
+Analytical Chart
+Cetegory Management
+Currency Converter (API)
+Budget Reminder
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+IDE Version:
+IDE: Android Studio
+Version: Hedgehog | 2023.1.1 Patch 2
+
+Database:
+Firebase
+
+
+APIs: https://freecurrencyapi.com/
+
+
+
